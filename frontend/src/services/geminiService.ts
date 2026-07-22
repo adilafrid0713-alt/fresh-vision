@@ -32,7 +32,7 @@ export async function analyzeFoodImageWithGemini(
   batchId: string = 'BATCH-01',
   foodTypeHint?: string
 ): Promise<InspectionRecord> {
-  const apiKey = import.meta.env.VITE_GOOGLE_API_KEY || (process as any).env?.GOOGLE_API_KEY || '';
+  const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
   if (!apiKey) {
     throw new Error('GOOGLE_API_KEY not found in .env. Please check your .env configuration.');
   }
@@ -132,61 +132,61 @@ Return ONLY the valid JSON object without any Markdown formatting or extra text.
       const rawFreshness = Number(parsed.metrics?.freshness_score || 95.0);
       const rawDamage = Number(parsed.metrics?.damage_percentage || 0.0);
 
-      const parsedItems = Array.isArray(parsed.detected_items) && parsed.detected_items.length > 0 
+      const parsedItems = Array.isArray(parsed.detected_items) && parsed.detected_items.length > 0
         ? parsed.detected_items.map((item: any, idx: number) => {
-            const grade = item.metrics?.quality_grade || (rawGrade as any);
-            const status = item.consumption_status || (
-              grade === 'A' || grade === 'B' ? 'Good to Consume' :
+          const grade = item.metrics?.quality_grade || (rawGrade as any);
+          const status = item.consumption_status || (
+            grade === 'A' || grade === 'B' ? 'Good to Consume' :
               grade === 'C' ? 'Processing / Juice Only' : 'Not Good to Consume (Discard)'
-            );
-            return {
-              id: item.id || `ITEM-${String(idx + 1).padStart(2, '0')}`,
-              name: item.name || `${parsed.food_type || 'Produce Item'} #${idx + 1}`,
-              food_type: item.food_type || parsed.food_type || 'Produce Item',
-              bbox: Array.isArray(item.bbox) && item.bbox.length === 4 ? item.bbox : [100, 100, 900, 900],
-              consumption_status: status,
-              summary: item.summary || `Biological inspection shows ${status.toLowerCase()} condition with grade ${grade}.`,
-              good_bad_explanation: {
-                why_good: item.good_bad_explanation?.why_good || (
-                  grade === 'Reject' ? 'Minimal intact tissue; structural decay prevents safe consumption.' :
+          );
+          return {
+            id: item.id || `ITEM-${String(idx + 1).padStart(2, '0')}`,
+            name: item.name || `${parsed.food_type || 'Produce Item'} #${idx + 1}`,
+            food_type: item.food_type || parsed.food_type || 'Produce Item',
+            bbox: Array.isArray(item.bbox) && item.bbox.length === 4 ? item.bbox : [100, 100, 900, 900],
+            consumption_status: status,
+            summary: item.summary || `Biological inspection shows ${status.toLowerCase()} condition with grade ${grade}.`,
+            good_bad_explanation: {
+              why_good: item.good_bad_explanation?.why_good || (
+                grade === 'Reject' ? 'Minimal intact tissue; structural decay prevents safe consumption.' :
                   'Exhibits firm cellular turgor pressure, uniform cuticle coloration, and healthy nutrient retention.'
-                ),
-                why_bad: item.good_bad_explanation?.why_bad || (
-                  grade === 'A' ? 'No surface defects or biological degradation detected. Excellent condition.' :
+              ),
+              why_bad: item.good_bad_explanation?.why_bad || (
+                grade === 'A' ? 'No surface defects or biological degradation detected. Excellent condition.' :
                   grade === 'B' ? 'Minor mechanical skin marks or minor superficial bruising. No microbial rot.' :
-                  grade === 'C' ? 'Overripe texture with surface browning and bruising requiring immediate industrial extraction.' :
-                  'Active fungal/browning rot detected with high biological contamination risk. Quarantine required.'
-                ),
-              },
-              metrics: {
-                freshness_score: Number(item.metrics?.freshness_score || rawFreshness),
-                quality_grade: grade,
-                damage_percentage: Number(item.metrics?.damage_percentage || rawDamage),
-                confidence: Number(item.metrics?.confidence || 98.5),
-              },
-              defects: item.defects || []
-            };
-          })
+                    grade === 'C' ? 'Overripe texture with surface browning and bruising requiring immediate industrial extraction.' :
+                      'Active fungal/browning rot detected with high biological contamination risk. Quarantine required.'
+              ),
+            },
+            metrics: {
+              freshness_score: Number(item.metrics?.freshness_score || rawFreshness),
+              quality_grade: grade,
+              damage_percentage: Number(item.metrics?.damage_percentage || rawDamage),
+              confidence: Number(item.metrics?.confidence || 98.5),
+            },
+            defects: item.defects || []
+          };
+        })
         : [
-            {
-              id: 'ITEM-01',
-              name: `${parsed.food_type || foodTypeHint || 'Produce Item'} #1`,
-              food_type: parsed.food_type || foodTypeHint || 'Produce Item',
-              bbox: [50, 50, 950, 950] as [number, number, number, number],
-              consumption_status: (rawGrade === 'A' || rawGrade === 'B' ? 'Good to Consume' : rawGrade === 'C' ? 'Processing / Juice Only' : 'Not Good to Consume (Discard)') as any,
-              summary: parsed.metrics?.recommendation || 'Inspected produce item.',
-              good_bad_explanation: {
-                why_good: rawGrade === 'Reject' ? 'Limited viable tissue remaining due to active degradation.' : 'High structural integrity and healthy cell wall density.',
-                why_bad: rawGrade === 'A' ? 'No biological defects or active rot detected. Safe to consume.' : rawGrade === 'B' ? 'Minor superficial marks without deep tissue damage.' : rawGrade === 'C' ? 'Enzymatic softening and bruising present.' : 'Contains active rot and bacterial degradation. Do not consume.'
-              },
-              metrics: {
-                freshness_score: rawFreshness,
-                quality_grade: rawGrade as any,
-                damage_percentage: rawDamage,
-                confidence: Number(parsed.metrics?.confidence || 98.5)
-              }
+          {
+            id: 'ITEM-01',
+            name: `${parsed.food_type || foodTypeHint || 'Produce Item'} #1`,
+            food_type: parsed.food_type || foodTypeHint || 'Produce Item',
+            bbox: [50, 50, 950, 950] as [number, number, number, number],
+            consumption_status: (rawGrade === 'A' || rawGrade === 'B' ? 'Good to Consume' : rawGrade === 'C' ? 'Processing / Juice Only' : 'Not Good to Consume (Discard)') as any,
+            summary: parsed.metrics?.recommendation || 'Inspected produce item.',
+            good_bad_explanation: {
+              why_good: rawGrade === 'Reject' ? 'Limited viable tissue remaining due to active degradation.' : 'High structural integrity and healthy cell wall density.',
+              why_bad: rawGrade === 'A' ? 'No biological defects or active rot detected. Safe to consume.' : rawGrade === 'B' ? 'Minor superficial marks without deep tissue damage.' : rawGrade === 'C' ? 'Enzymatic softening and bruising present.' : 'Contains active rot and bacterial degradation. Do not consume.'
+            },
+            metrics: {
+              freshness_score: rawFreshness,
+              quality_grade: rawGrade as any,
+              damage_percentage: rawDamage,
+              confidence: Number(parsed.metrics?.confidence || 98.5)
             }
-          ];
+          }
+        ];
 
       const record: InspectionRecord = {
         id: `INS-${Math.floor(10000 + Math.random() * 90000)}`,

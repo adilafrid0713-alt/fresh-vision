@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
   // Load .env from workspace root (a:\ai_food\.env) as well as local .env
   const env = loadEnv(mode, path.resolve(__dirname, '..'), '');
   const localEnv = loadEnv(mode, __dirname, '');
-  const apiKey = localEnv.GOOGLE_API_KEY || env.GOOGLE_API_KEY || '';
+  const apiKey = localEnv.VITE_GOOGLE_API_KEY || env.VITE_GOOGLE_API_KEY || '';
 
   return {
     plugins: [react(), tailwindcss()],
@@ -18,7 +18,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     define: {
-      'process.env.GOOGLE_API_KEY': JSON.stringify(apiKey),
+      'process.env.VITE_GOOGLE_API_KEY': JSON.stringify(apiKey),
       'import.meta.env.VITE_GOOGLE_API_KEY': JSON.stringify(apiKey),
     },
     server: {
