@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle2, CircleDot, Clock, Cpu } from 'lucide-react';
-import { Card } from '../components/common/Card';
+import { Card } from '../components/ui/Card';
 import { useInspectionStore } from '../store/inspectionStore';
 import type { InspectionRecord } from '../types';
 import { analyzeFoodImageWithGemini } from '../services/geminiService';
@@ -214,42 +214,42 @@ export const ProcessingPage: React.FC = () => {
   return (
     <div className="max-w-5xl mx-auto space-y-8 py-6 animate-fadeIn">
       <div className="text-center space-y-3">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold animate-pulse shadow">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/15 border border-primary/20 text-primary text-xs font-mono font-bold animate-pulse shadow">
           <Cpu className="h-3.5 w-3.5" />
           <span>EXECUTING OPTICAL VISION PIPELINE v2.4</span>
         </div>
-        <h1 className="text-3xl md:text-4xl font-extrabold text-slate-100 tracking-tight font-sans">Autonomous Multi-Stage Analysis</h1>
-        <p className="text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
+        <h1 className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight font-sans">Autonomous Multi-Stage Analysis</h1>
+        <p className="text-sm text-muted-foreground max-w-xl mx-auto leading-relaxed">
           High-speed automated multi-spectral produce analysis in progress. Segmenting surface tissue, HSV chromaticity, and structural density.
         </p>
       </div>
 
       <div className="grid gap-8 md:grid-cols-12 items-center">
         <div className="md:col-span-6">
-          <Card className="p-4 bg-slate-950/90 border-emerald-500/40 shadow-2xl shadow-emerald-950/50 backdrop-blur-2xl">
-            <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-4 font-mono text-xs text-slate-300">
-              <span className="flex items-center gap-2 text-emerald-400 font-extrabold">
-                <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-ping" />
+          <Card className="p-4 bg-muted/30 border-primary/30 shadow-lg shadow-cyan-950/50 backdrop-blur-2xl">
+            <div className="flex items-center justify-between border-b border-border pb-3 mb-4 font-mono text-xs text-muted-foreground">
+              <span className="flex items-center gap-2 text-primary font-extrabold">
+                <span className="h-2.5 w-2.5 rounded-full bg-primary animate-ping" />
                 TENSOR FRAME: ACTIVE
               </span>
-              <span className="bg-slate-900 px-2.5 py-1 rounded border border-white/10">BATCH: <span className="text-slate-100 font-bold">{activeBatchNo}</span></span>
+              <span className="bg-muted/50 px-2.5 py-1 rounded border border-border">BATCH: <span className="text-foreground font-bold">{activeBatchNo}</span></span>
             </div>
 
-            <div className="relative aspect-square rounded-2xl overflow-hidden bg-slate-900 border border-white/15 flex items-center justify-center shadow-inner">
+            <div className="relative aspect-square rounded-2xl overflow-hidden bg-muted/50 border border-border flex items-center justify-center shadow-sm">
               <div className="animate-laser z-20" />
 
               {currentUpload ? (
                 <img src={currentUpload.url} alt="Processing produce" className="w-full h-full object-contain filter contrast-125 saturate-150" />
               ) : (
-                <div className="text-xs font-mono text-slate-500">No input image detected</div>
+                <div className="text-xs font-mono text-muted-foreground">No input image detected</div>
               )}
 
-              <div className="absolute top-3.5 left-3.5 w-5 h-5 border-t-2 border-l-2 border-emerald-400 pointer-events-none drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
-              <div className="absolute top-3.5 right-3.5 w-5 h-5 border-t-2 border-r-2 border-emerald-400 pointer-events-none drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
-              <div className="absolute bottom-3.5 left-3.5 w-5 h-5 border-b-2 border-l-2 border-emerald-400 pointer-events-none drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
-              <div className="absolute bottom-3.5 right-3.5 w-5 h-5 border-b-2 border-r-2 border-emerald-400 pointer-events-none drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+              <div className="absolute top-3.5 left-3.5 w-5 h-5 border-t-2 border-l-2 border-cyan-400 pointer-events-none drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+              <div className="absolute top-3.5 right-3.5 w-5 h-5 border-t-2 border-r-2 border-cyan-400 pointer-events-none drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+              <div className="absolute bottom-3.5 left-3.5 w-5 h-5 border-b-2 border-l-2 border-cyan-400 pointer-events-none drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+              <div className="absolute bottom-3.5 right-3.5 w-5 h-5 border-b-2 border-r-2 border-cyan-400 pointer-events-none drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
 
-              <div className="absolute bottom-4 left-4 right-4 bg-slate-950/90 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 font-mono text-xs text-emerald-400 font-bold flex justify-between shadow-lg">
+              <div className="absolute bottom-4 left-4 right-4 bg-muted/30 backdrop-blur-sm px-4 py-2 rounded-xl border border-border font-mono text-xs text-primary font-bold flex justify-between shadow-lg">
                 <span>STAGE: {activeStep + 1} / {stages.length}</span>
                 <span className="animate-pulse">{stages[activeStep]?.timeStr}</span>
               </div>
@@ -258,12 +258,12 @@ export const ProcessingPage: React.FC = () => {
         </div>
 
         <div className="md:col-span-6 space-y-3.5">
-          <div className="flex items-center justify-between text-xs font-mono text-slate-300 px-1 font-bold">
+          <div className="flex items-center justify-between text-xs font-mono text-muted-foreground px-1 font-bold">
             <span className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
               <span>PIPELINE SEQUENCE</span>
             </span>
-            <span className="text-emerald-400">EST. LATENCY: ~270ms</span>
+            <span className="text-primary">EST. LATENCY: ~270ms</span>
           </div>
 
           <div className="space-y-3 max-h-[460px] overflow-y-auto pr-1">
@@ -276,17 +276,17 @@ export const ProcessingPage: React.FC = () => {
                   key={idx}
                   className={`p-4 rounded-2xl border transition-all duration-300 flex items-start gap-3.5 ${
                     isCurrent
-                      ? 'bg-gradient-to-r from-emerald-500/25 via-slate-900/90 to-blue-500/15 border-emerald-400 shadow-xl shadow-emerald-950/60 scale-[1.02]'
+                      ? 'bg-gradient-to-r from-cyan-500/25 via-slate-900/90 to-blue-500/15 border-cyan-400 shadow-xl shadow-cyan-950/60 scale-[1.02]'
                       : isDone
-                      ? 'bg-slate-900/80 border-emerald-500/30 opacity-90 shadow-sm'
-                      : 'bg-slate-900/40 border-white/5 opacity-50'
+                      ? 'bg-muted/30 border-primary/20 opacity-90 shadow-sm'
+                      : 'bg-muted/50/40 border-border opacity-50'
                   }`}
                 >
                   <div className="mt-0.5 shrink-0">
                     {isDone ? (
-                      <CheckCircle2 className="h-5 w-5 text-emerald-400 drop-shadow" />
+                      <CheckCircle2 className="h-5 w-5 text-primary drop-shadow" />
                     ) : isCurrent ? (
-                      <CircleDot className="h-5 w-5 text-emerald-300 animate-spin drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+                      <CircleDot className="h-5 w-5 text-primary animate-spin drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
                     ) : (
                       <Clock className="h-5 w-5 text-slate-600" />
                     )}
@@ -294,13 +294,13 @@ export const ProcessingPage: React.FC = () => {
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <h4 className={`text-sm font-extrabold truncate ${isCurrent ? 'text-emerald-300' : isDone ? 'text-slate-100' : 'text-slate-500'}`}>
+                      <h4 className={`text-sm font-extrabold truncate ${isCurrent ? 'text-primary' : isDone ? 'text-foreground' : 'text-muted-foreground'}`}>
                         {stage.title}
                       </h4>
-                      {isDone && <span className="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-500/20">{stage.timeStr}</span>}
+                      {isDone && <span className="text-[10px] font-mono font-bold text-primary bg-cyan-950/60 px-1.5 py-0.5 rounded border border-primary/20">{stage.timeStr}</span>}
                       {isCurrent && <span className="text-[10px] font-mono font-bold text-blue-300 animate-pulse bg-blue-950/60 px-2 py-0.5 rounded border border-blue-500/30">RUNNING...</span>}
                     </div>
-                    <p className="text-xs text-slate-300 mt-1 truncate font-medium">{stage.desc}</p>
+                    <p className="text-xs text-muted-foreground mt-1 truncate font-medium">{stage.desc}</p>
                   </div>
                 </div>
               );

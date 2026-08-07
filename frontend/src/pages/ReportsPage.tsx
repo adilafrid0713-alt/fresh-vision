@@ -3,8 +3,8 @@ import {
   Download, ShieldCheck, QrCode, Sparkles, FileText, 
   AlertTriangle, Lock, Key, Award, Layers
 } from 'lucide-react';
-import { Card } from '../components/common/Card';
-import { Badge } from '../components/common/Badge';
+import { Card } from '../components/ui/Card';
+import { Badge } from '../components/ui/Badge';
 import { useInspectionStore } from '../store/inspectionStore';
 
 interface CertificateReport {
@@ -177,8 +177,8 @@ export const ReportsPage: React.FC = () => {
             <Award className="h-3.5 w-3.5 animate-bounce" />
             <span>ISO 22000 COMPLIANT AUDIT CERTIFICATION</span>
           </div>
-          <h1 className="text-3xl font-extrabold text-slate-100 tracking-tight">Cryptographic Audit Certificates</h1>
-          <p className="text-sm text-slate-400">
+          <h1 className="text-3xl font-extrabold text-foreground tracking-tight">Cryptographic Audit Certificates</h1>
+          <p className="text-sm text-muted-foreground">
             Immutable, cryptographically verifiable inspection compliance reports for regulatory authorities and export validation.
           </p>
         </div>
@@ -186,9 +186,9 @@ export const ReportsPage: React.FC = () => {
         <div className="flex items-center gap-3 self-start">
           <button
             onClick={generateLiveCertificate}
-            className="glass-button-secondary flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/10 transition-all shadow"
+            className="glass-button-secondary flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold border border-primary/20 text-primary hover:bg-cyan-500/10 transition-all shadow"
           >
-            <Sparkles className="h-4 w-4 text-emerald-400 animate-spin" />
+            <Sparkles className="h-4 w-4 text-primary animate-spin" />
             <span>Generate Live Certificate from Active Shift</span>
           </button>
           <button
@@ -206,14 +206,14 @@ export const ReportsPage: React.FC = () => {
         <div className="lg:col-span-4 space-y-4">
           <Card title="Certificate Archive" subtitle="Select report to preview or sign">
             {/* Line Filter Pill */}
-            <div className="flex items-center gap-1.5 mb-4 pb-3 border-b border-white/10 overflow-x-auto text-xs font-mono">
-              <span className="text-slate-400 shrink-0">Line:</span>
+            <div className="flex items-center gap-1.5 mb-4 pb-3 border-b border-border overflow-x-auto text-xs font-mono">
+              <span className="text-muted-foreground shrink-0">Line:</span>
               {['all', 'Main Conveyor Line 1', 'Optical Sorter Line 2', 'Cold Storage Quarantine Bay'].map(line => (
                 <button
                   key={line}
                   onClick={() => setLineFilter(line)}
                   className={`px-2.5 py-1 rounded-lg transition-all shrink-0 ${
-                    lineFilter === line ? 'bg-slate-800 text-emerald-400 font-bold border border-emerald-500/30' : 'text-slate-400 hover:text-slate-200'
+                    lineFilter === line ? 'bg-accent text-primary font-bold border border-primary/20' : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   {line === 'all' ? 'All Lines' : line}
@@ -228,30 +228,30 @@ export const ReportsPage: React.FC = () => {
                   onClick={() => setSelectedReportId(rep.id)}
                   className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between ${
                     selectedReportId === rep.id
-                      ? 'bg-gradient-to-r from-emerald-500/15 via-slate-900 to-blue-500/10 border-emerald-500 shadow-xl shadow-emerald-950/40 scale-[1.01]'
-                      : 'bg-slate-900/60 border-white/5 hover:border-slate-700 hover:bg-slate-800/40'
+                      ? 'bg-gradient-to-r from-cyan-500/15 via-slate-900 to-blue-500/10 border-cyan-500 shadow-xl shadow-cyan-950/40 scale-[1.01]'
+                      : 'bg-card/60 border-border hover:border-slate-700 hover:bg-accent/40'
                   }`}
                 >
                   <div>
                     <div className="flex items-center justify-between font-mono text-xs">
-                      <span className="font-extrabold text-emerald-400">{rep.id}</span>
+                      <span className="font-extrabold text-primary">{rep.id}</span>
                       <Badge 
                         label={rep.status} 
                         variant={rep.status === 'VERIFIED & SIGNED' ? 'success' : rep.status === 'PENDING SIGN-OFF' ? 'warning' : 'default'} 
                         size="sm" 
                       />
                     </div>
-                    <h4 className="text-sm font-bold text-slate-100 mt-2 line-clamp-1">{rep.title}</h4>
+                    <h4 className="text-sm font-bold text-foreground mt-2 line-clamp-1">{rep.title}</h4>
                   </div>
 
-                  <div className="mt-3 pt-2.5 border-t border-white/5 grid grid-cols-2 gap-2 font-mono text-[11px] text-slate-400">
+                  <div className="mt-3 pt-2.5 border-t border-border grid grid-cols-2 gap-2 font-mono text-[11px] text-muted-foreground">
                     <div>
                       <span className="text-slate-500 block text-[9px]">BATCH ID</span>
-                      <span className="text-slate-200 font-bold">{rep.batch_id}</span>
+                      <span className="text-foreground font-bold">{rep.batch_id}</span>
                     </div>
                     <div className="text-right">
                       <span className="text-slate-500 block text-[9px]">TOTAL ACCEPTED</span>
-                      <span className="text-emerald-400 font-bold">{rep.accepted} / {rep.total_inspected}</span>
+                      <span className="text-primary font-bold">{rep.accepted} / {rep.total_inspected}</span>
                     </div>
                   </div>
                   <div className="text-[10px] text-slate-500 font-mono mt-2 flex justify-between">
@@ -267,14 +267,14 @@ export const ReportsPage: React.FC = () => {
         {/* Right Panel: Official Certificate & Annex Console (8 Cols) */}
         <div className="lg:col-span-8 space-y-4">
           {/* Certificate View Switcher Tabs */}
-          <div className="flex items-center justify-between bg-slate-900/90 p-2 rounded-2xl border border-white/10 font-mono text-xs">
+          <div className="flex items-center justify-between bg-card/90 p-2 rounded-2xl border border-border font-mono text-xs">
             <div className="flex gap-2 overflow-x-auto">
               <button
                 onClick={() => setActiveTab('certificate')}
                 className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all ${
                   activeTab === 'certificate'
-                    ? 'bg-emerald-500 text-slate-950 shadow-md'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                    ? 'bg-primary text-primary-foreground shadow-md'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                 }`}
               >
                 <FileText className="h-4 w-4" />
@@ -284,8 +284,8 @@ export const ReportsPage: React.FC = () => {
                 onClick={() => setActiveTab('annex')}
                 className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all ${
                   activeTab === 'annex'
-                    ? 'bg-emerald-500 text-slate-950 shadow-md'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                    ? 'bg-primary text-primary-foreground shadow-md'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                 }`}
               >
                 <Layers className="h-4 w-4" />
@@ -295,8 +295,8 @@ export const ReportsPage: React.FC = () => {
                 onClick={() => setActiveTab('crypto')}
                 className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all ${
                   activeTab === 'crypto'
-                    ? 'bg-emerald-500 text-slate-950 shadow-md'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                    ? 'bg-primary text-primary-foreground shadow-md'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                 }`}
               >
                 <Key className="h-4 w-4" />
@@ -306,7 +306,7 @@ export const ReportsPage: React.FC = () => {
 
             <button
               onClick={exportAnnexJSON}
-              className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-white/10 flex items-center gap-1.5 shrink-0"
+              className="px-3 py-1.5 rounded-xl bg-accent hover:bg-accent/80 text-muted-foreground border border-border flex items-center gap-1.5 shrink-0"
               title="Export Full Report JSON"
             >
               <Download className="h-3.5 w-3.5 text-blue-400" />
@@ -316,7 +316,7 @@ export const ReportsPage: React.FC = () => {
 
           {/* TAB 1: OFFICIAL CERTIFICATE VIEW */}
           {activeTab === 'certificate' && (
-            <div className="glass-panel rounded-3xl p-8 md:p-10 border-2 border-emerald-500/30 shadow-2xl bg-slate-950 text-slate-100 space-y-8 relative overflow-hidden font-sans">
+            <div className="glass-panel rounded-3xl p-8 md:p-10 border-2 border-primary/20 shadow-2xl bg-background text-foreground space-y-8 relative overflow-hidden font-sans">
               {/* Background Watermark */}
               <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none select-none font-extrabold text-9xl rotate-45">
                 VERIFIED AI
@@ -329,7 +329,7 @@ export const ReportsPage: React.FC = () => {
                     <AlertTriangle className="h-6 w-6 text-amber-400 shrink-0" />
                     <div>
                       <span className="font-bold text-amber-300 block text-xs">CERTIFICATE AWAITING QA SIGN-OFF</span>
-                      <span className="text-[11px] text-slate-400">All automated telemetry checked. Ready for official stamp.</span>
+                      <span className="text-[11px] text-muted-foreground">All automated telemetry checked. Ready for official stamp.</span>
                     </div>
                   </div>
                   <button
@@ -343,55 +343,55 @@ export const ReportsPage: React.FC = () => {
               )}
 
               {/* Certificate Header */}
-              <div className="flex flex-col sm:flex-row sm:justify-between items-start gap-4 border-b border-white/10 pb-6">
+              <div className="flex flex-col sm:flex-row sm:justify-between items-start gap-4 border-b border-border pb-6">
                 <div>
                   <div className="flex items-center gap-2.5">
-                    <div className="h-9 w-9 rounded-xl bg-emerald-500 flex items-center justify-center text-slate-950 font-extrabold font-mono text-lg shadow-lg shadow-emerald-500/30">
+                    <div className="h-9 w-9 rounded-xl bg-cyan-500 flex items-center justify-center text-slate-950 font-extrabold font-mono text-lg shadow-sm">
                       FV
                     </div>
                     <span className="text-2xl font-extrabold tracking-tight text-white">FreshVision AI</span>
                   </div>
-                  <span className="text-xs text-emerald-400 font-mono font-bold block mt-1">
+                  <span className="text-xs text-primary font-mono font-bold block mt-1">
                     OFFICIAL INDUSTRIAL QUALITY COMPLIANCE CERTIFICATE
                   </span>
                 </div>
-                <div className="text-left sm:text-right font-mono text-xs space-y-1 bg-slate-900/90 p-3 rounded-xl border border-white/10">
-                  <div className="text-emerald-400 font-extrabold text-sm">{activeReport.id}</div>
-                  <div className="text-slate-400">ISSUED: {activeReport.date}</div>
+                <div className="text-left sm:text-right font-mono text-xs space-y-1 bg-card/90 p-3 rounded-xl border border-border">
+                  <div className="text-primary font-extrabold text-sm">{activeReport.id}</div>
+                  <div className="text-muted-foreground">ISSUED: {activeReport.date}</div>
                 </div>
               </div>
 
               {/* Certificate Metadata Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-900/80 p-5 rounded-2xl border border-white/10 font-mono text-xs">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-card/80 p-5 rounded-2xl border border-border font-mono text-xs">
                 <div>
-                  <span className="text-[10px] text-slate-400 block uppercase">Production Batch</span>
-                  <span className="font-bold text-slate-100 text-sm">{activeReport.batch_id}</span>
+                  <span className="text-[10px] text-muted-foreground block uppercase">Production Batch</span>
+                  <span className="font-bold text-foreground text-sm">{activeReport.batch_id}</span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 block uppercase">Factory Line</span>
-                  <span className="font-bold text-slate-100 text-sm">{activeReport.line}</span>
+                  <span className="text-[10px] text-muted-foreground block uppercase">Factory Line</span>
+                  <span className="font-bold text-foreground text-sm">{activeReport.line}</span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 block uppercase">Inspector in Charge</span>
-                  <span className="font-bold text-slate-100 text-sm">{activeReport.inspector}</span>
+                  <span className="text-[10px] text-muted-foreground block uppercase">Inspector in Charge</span>
+                  <span className="font-bold text-foreground text-sm">{activeReport.inspector}</span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 block uppercase">Optical Engine</span>
-                  <span className="font-bold text-emerald-400 text-sm">Multi-Spectral CV</span>
+                  <span className="text-[10px] text-muted-foreground block uppercase">Optical Engine</span>
+                  <span className="font-bold text-primary text-sm">Multi-Spectral CV</span>
                 </div>
               </div>
 
               {/* Summary KPI Table */}
               <div className="space-y-3">
-                <h3 className="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider">Batch Inspection Summary Matrix</h3>
+                <h3 className="text-xs font-mono font-bold text-muted-foreground uppercase tracking-wider">Batch Inspection Summary Matrix</h3>
                 <div className="grid grid-cols-3 gap-4 text-center font-mono">
-                  <div className="p-5 rounded-2xl bg-slate-900 border border-white/10">
-                    <span className="text-[11px] text-slate-400 block">TOTAL SPECIMENS INSPECTED</span>
-                    <span className="text-3xl font-extrabold text-slate-100 mt-1 block">{activeReport.total_inspected}</span>
+                  <div className="p-5 rounded-2xl bg-card border border-border">
+                    <span className="text-[11px] text-muted-foreground block">TOTAL SPECIMENS INSPECTED</span>
+                    <span className="text-3xl font-extrabold text-foreground mt-1 block">{activeReport.total_inspected}</span>
                   </div>
-                  <div className="p-5 rounded-2xl bg-emerald-950/40 border border-emerald-500/30">
-                    <span className="text-[11px] text-emerald-400 block">ACCEPTED (GRADE A/B)</span>
-                    <span className="text-3xl font-extrabold text-emerald-400 mt-1 block">{activeReport.accepted}</span>
+                  <div className="p-5 rounded-2xl bg-cyan-950/40 border border-primary/20">
+                    <span className="text-[11px] text-primary block">ACCEPTED (GRADE A/B)</span>
+                    <span className="text-3xl font-extrabold text-primary mt-1 block">{activeReport.accepted}</span>
                   </div>
                   <div className="p-5 rounded-2xl bg-red-950/40 border border-red-500/30">
                     <span className="text-[11px] text-red-400 block">QUARANTINED / REJECTED</span>
@@ -401,28 +401,28 @@ export const ReportsPage: React.FC = () => {
               </div>
 
               {/* Signature & Verification Footer */}
-              <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-6">
+              <div className="border-t border-border pt-6 flex flex-col sm:flex-row justify-between items-center gap-6">
                 <div className="flex items-center gap-4">
                   <div className="p-3 bg-white rounded-xl text-slate-950 flex flex-col items-center justify-center font-mono text-[9px] font-extrabold shrink-0 shadow-lg">
                     <QrCode className="h-12 w-12 text-slate-950" />
                     <span className="mt-0.5">VERIFY-QR</span>
                   </div>
-                  <div className="text-xs text-slate-400 leading-relaxed font-mono">
-                    <span className="text-emerald-400 font-bold flex items-center gap-1.5 text-sm">
+                  <div className="text-xs text-muted-foreground leading-relaxed font-mono">
+                    <span className="text-primary font-bold flex items-center gap-1.5 text-sm">
                       <ShieldCheck className="h-4 w-4" /> {activeReport.status}
                     </span>
-                    <span className="block mt-0.5 text-[11px] text-slate-400 break-all">
+                    <span className="block mt-0.5 text-[11px] text-muted-foreground break-all">
                       SHA-256: {activeReport.hash.substring(0, 36)}...
                     </span>
                   </div>
                 </div>
 
                 <div className="text-center sm:text-right font-mono text-xs">
-                  <div className="border-b-2 border-emerald-500 pb-1 mb-1 font-extrabold text-slate-100 text-sm">
+                  <div className="border-b-2 border-cyan-500 pb-1 mb-1 font-extrabold text-foreground text-sm">
                     {activeReport.inspector}
                   </div>
                   <span className="text-[10px] text-slate-500 block">AUTHORIZED QA OFFICER SIGNATURE</span>
-                  <span className="text-[9px] text-emerald-400 font-bold">CRYPTO-SEALED BY REPORTLAB ENGINE</span>
+                  <span className="text-[9px] text-primary font-bold">CRYPTO-SEALED BY REPORTLAB ENGINE</span>
                 </div>
               </div>
             </div>
@@ -434,7 +434,7 @@ export const ReportsPage: React.FC = () => {
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse font-mono text-xs">
                   <thead>
-                    <tr className="border-b border-white/10 bg-slate-900 text-slate-400 uppercase text-[10px]">
+                    <tr className="border-b border-border bg-card text-muted-foreground uppercase text-[10px]">
                       <th className="py-3 pl-4">Specimen ID &amp; Name</th>
                       <th className="py-3">Classified Grade</th>
                       <th className="py-3">Freshness Index</th>
@@ -442,22 +442,22 @@ export const ReportsPage: React.FC = () => {
                       <th className="py-3 pr-4">Consumption Advisory</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/5">
+                  <tbody className="divide-y divide-border">
                     {activeReport.items_annex.map((item, idx) => (
-                      <tr key={idx} className="hover:bg-slate-900/50">
-                        <td className="py-3 pl-4 font-bold text-slate-200">{item.item_name}</td>
+                      <tr key={idx} className="hover:bg-card/50">
+                        <td className="py-3 pl-4 font-bold text-foreground">{item.item_name}</td>
                         <td className="py-3">
                           <Badge label={`Gr. ${item.grade}`} variant={item.grade === 'A' ? 'success' : item.grade === 'B' ? 'info' : item.grade === 'C' ? 'warning' : 'danger'} size="sm" />
                         </td>
                         <td className="py-3">
-                          <span className={`font-bold ${item.freshness >= 80 ? 'text-emerald-400' : item.freshness >= 60 ? 'text-amber-400' : 'text-red-400'}`}>
+                          <span className={`font-bold ${item.freshness >= 80 ? 'text-primary' : item.freshness >= 60 ? 'text-amber-400' : 'text-red-400'}`}>
                             {item.freshness}%
                           </span>
                         </td>
-                        <td className="py-3 text-slate-300">{item.damage}%</td>
+                        <td className="py-3 text-muted-foreground">{item.damage}%</td>
                         <td className="py-3 pr-4">
                           <span className={`font-bold text-[11px] ${
-                            item.consumption_status === 'Good to Consume' ? 'text-emerald-400' :
+                            item.consumption_status === 'Good to Consume' ? 'text-primary' :
                             item.consumption_status === 'Processing / Juice Only' ? 'text-amber-400' : 'text-red-400'
                           }`}>
                             {item.consumption_status === 'Good to Consume' ? '✅ Good to Consume' :
@@ -476,27 +476,27 @@ export const ReportsPage: React.FC = () => {
           {activeTab === 'crypto' && (
             <Card title="Cryptographic Integrity Seal & Audit Proof" subtitle="SHA-256 Write-Ahead Log verification block">
               <div className="space-y-6 font-mono text-xs">
-                <div className="p-5 rounded-2xl bg-slate-950 border border-white/10 space-y-3">
-                  <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm">
+                <div className="p-5 rounded-2xl bg-background border border-border space-y-3">
+                  <div className="flex items-center gap-2 text-primary font-bold text-sm">
                     <Lock className="h-4 w-4" />
                     <span>ZERO-KNOWLEDGE IMMUTABILITY VERIFIED</span>
                   </div>
-                  <p className="text-slate-400 text-xs font-sans leading-relaxed">
+                  <p className="text-muted-foreground text-xs font-sans leading-relaxed">
                     This certificate is cryptographically anchored to the local Write-Ahead Log (WAL) store. Any modification to the underlying image frames, defect areas, or quality grades will invalidate this SHA-256 hash.
                   </p>
-                  <div className="p-3 rounded-xl bg-slate-900 border border-white/5 space-y-1">
+                  <div className="p-3 rounded-xl bg-card border border-border space-y-1">
                     <span className="text-[10px] text-slate-500 block uppercase">SHA-256 Certificate Hash</span>
-                    <code className="text-emerald-300 text-[11px] font-bold break-all block">{activeReport.hash}</code>
+                    <code className="text-primary text-[11px] font-bold break-all block">{activeReport.hash}</code>
                   </div>
                 </div>
 
                 <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="p-4 rounded-xl bg-slate-900 border border-white/5">
-                    <span className="text-slate-400 text-[10px] block">SIGNING TIMESTAMP (UTC)</span>
-                    <span className="font-bold text-slate-200 text-sm mt-1 block">{activeReport.date}</span>
+                  <div className="p-4 rounded-xl bg-card border border-border">
+                    <span className="text-muted-foreground text-[10px] block">SIGNING TIMESTAMP (UTC)</span>
+                    <span className="font-bold text-foreground text-sm mt-1 block">{activeReport.date}</span>
                   </div>
-                  <div className="p-4 rounded-xl bg-slate-900 border border-white/5">
-                    <span className="text-slate-400 text-[10px] block">VERIFICATION PROTOCOL</span>
+                  <div className="p-4 rounded-xl bg-card border border-border">
+                    <span className="text-muted-foreground text-[10px] block">VERIFICATION PROTOCOL</span>
                     <span className="font-bold text-blue-400 text-sm mt-1 block">ISO 22000 / SHA-256</span>
                   </div>
                 </div>

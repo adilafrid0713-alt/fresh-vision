@@ -2,8 +2,8 @@ import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 import { Upload, Camera, AlertCircle, Scan, ArrowRight, X, Layers, CheckCircle2 } from 'lucide-react';
-import { Card } from '../components/common/Card';
-import { Badge } from '../components/common/Badge';
+import { Card } from '../components/ui/Card';
+import { Badge } from '../components/ui/Badge';
 import { useInspectionStore } from '../store/inspectionStore';
 
 export const UploadPage: React.FC = () => {
@@ -170,11 +170,11 @@ export const UploadPage: React.FC = () => {
     <div className="max-w-6xl mx-auto space-y-8 animate-fadeIn pb-12">
       {/* Header */}
       <div className="text-center space-y-3">
-        <Badge label="AUTONOMOUS VISION INGESTION v2.4" variant="premium" glow pulse />
-        <h1 className="text-3xl md:text-5xl font-extrabold text-slate-100 tracking-tight font-sans">
+        <Badge label="AUTONOMOUS VISION INGESTION v2.4" variant="premium" pulse />
+        <h1 className="text-3xl md:text-5xl font-extrabold text-foreground tracking-tight font-sans">
           AI Quality Inspection <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-blue-500 bg-clip-text text-transparent">Ingestion Portal</span>
         </h1>
-        <p className="text-sm md:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
           Ingest optical captures via high-speed conveyor camera feed or drag-and-drop. All captures undergo sub-50ms multi-spectral defect segmentation and wholesale valuation indexing.
         </p>
       </div>
@@ -183,46 +183,46 @@ export const UploadPage: React.FC = () => {
       <div className="grid gap-8 lg:grid-cols-12 items-start">
         {/* Dropzone Panel (7 cols) */}
         <div className="lg:col-span-7 space-y-5">
-          <Card className="p-3 border-2 border-dashed border-slate-700/80 bg-slate-900/60 backdrop-blur-2xl">
+          <Card className="p-3 border-2 border-dashed border-slate-700/80 bg-muted/50/60 backdrop-blur-2xl">
             {!preview ? (
               <div
                 {...getRootProps()}
                 className={`flex flex-col items-center justify-center p-14 rounded-2xl transition-all duration-300 cursor-pointer relative overflow-hidden ${
                   isDragActive
                     ? 'bg-emerald-500/15 border-2 border-emerald-500 shadow-[0_0_30px_rgba(16,185,129,0.3)] scale-[0.99]'
-                    : 'hover:bg-slate-800/60 hover:border-emerald-500/40 group'
+                    : 'hover:bg-accent/60 hover:border-emerald-500/40 group'
                 }`}
               >
                 <input {...getInputProps()} />
-                <div className="p-5 rounded-2xl bg-slate-800/90 text-emerald-400 mb-5 shadow-xl group-hover:scale-110 group-hover:bg-emerald-500/20 transition-all border border-white/10">
+                <div className="p-5 rounded-2xl bg-accent/90 text-emerald-400 mb-5 shadow-xl group-hover:scale-110 group-hover:bg-emerald-500/20 transition-all border border-border">
                   <Upload className={`h-10 w-10 ${isDragActive ? 'animate-bounce' : ''}`} />
                 </div>
-                <h3 className="text-lg font-bold text-slate-100 text-center tracking-tight">
+                <h3 className="text-lg font-bold text-foreground text-center tracking-tight">
                   {isDragActive ? 'Drop image for instant AI inference...' : 'Drag & drop produce photograph here'}
                 </h3>
-                <p className="text-xs text-slate-400 text-center mt-2 font-mono">
+                <p className="text-xs text-muted-foreground text-center mt-2 font-mono">
                   Supports JPEG, PNG, WEBP up to 15MB • Auto-scaled to 1024px tensor matrix
                 </p>
                 <button
                   type="button"
-                  className="mt-7 px-6 py-2.5 rounded-xl bg-slate-800 border border-white/10 text-xs font-bold text-slate-200 hover:bg-slate-700 hover:text-emerald-300 transition-all shadow-md group-hover:border-emerald-500/30"
+                  className="mt-7 px-6 py-2.5 rounded-xl bg-accent border border-border text-xs font-bold text-foreground hover:bg-accent/80 hover:text-emerald-300 transition-all shadow-md group-hover:border-emerald-500/30"
                 >
                   Browse Filesystem Directory
                 </button>
               </div>
             ) : (
               <div className="space-y-3">
-                <div className="relative aspect-video rounded-2xl overflow-hidden bg-slate-950 border border-emerald-500/40 shadow-2xl group">
+                <div className="relative aspect-video rounded-2xl overflow-hidden bg-background border border-emerald-500/40 shadow-lg group">
                   {/* Scanning laser animation */}
                   <div className="animate-laser z-20" />
 
                   <img src={preview} alt="Selected produce for inspection" className={`w-full h-full object-contain transition-all duration-500 ${getFilterStyle()}`} />
                   
                   {/* Overlay Controls */}
-                  <div className="absolute inset-0 bg-slate-950/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 z-30">
+                  <div className="absolute inset-0 bg-background/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 z-30">
                     <button
                       onClick={() => { setPreview(null); setFileData(null); }}
-                      className="px-4 py-2.5 rounded-xl bg-red-600/90 text-white shadow-xl hover:bg-red-500 font-bold text-xs flex items-center gap-2 transition-transform hover:scale-105"
+                      className="px-4 py-2.5 rounded-xl bg-red-600/90 text-foreground shadow-xl hover:bg-red-500 font-bold text-xs flex items-center gap-2 transition-transform hover:scale-105"
                       title="Remove Image"
                     >
                       <X className="h-4 w-4" />
@@ -230,13 +230,13 @@ export const UploadPage: React.FC = () => {
                     </button>
                   </div>
 
-                  <div className="absolute top-3 right-3 z-20 flex items-center gap-2 bg-slate-900/90 backdrop-blur-md px-3 py-1 rounded-lg border border-white/10 font-mono text-[10px] text-emerald-400 font-bold shadow">
+                  <div className="absolute top-3 right-3 z-20 flex items-center gap-2 bg-muted/40 backdrop-blur-sm px-3 py-1 rounded-lg border border-border font-mono text-[10px] text-emerald-400 font-bold shadow">
                     <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
                     <span>OPTICAL MATRIX ARMED</span>
                   </div>
 
-                  <div className="absolute bottom-3 left-3 right-3 flex justify-between items-center bg-slate-900/90 backdrop-blur-md px-4 py-2.5 rounded-xl border border-white/10 text-xs font-mono z-20 shadow-lg">
-                    <span className="text-slate-200 truncate max-w-[240px] font-bold">
+                  <div className="absolute bottom-3 left-3 right-3 flex justify-between items-center bg-muted/40 backdrop-blur-sm px-4 py-2.5 rounded-xl border border-border text-xs font-mono z-20 shadow-lg">
+                    <span className="text-foreground truncate max-w-[240px] font-bold">
                       {fileData?.name || 'sample_image.jpg'}
                     </span>
                     <span className="text-emerald-400 font-extrabold tracking-wider">READY FOR INFERENCE</span>
@@ -244,24 +244,24 @@ export const UploadPage: React.FC = () => {
                 </div>
 
                 {/* Filter preview selector */}
-                <div className="flex items-center justify-between bg-slate-900/80 px-4 py-2 rounded-xl border border-white/10 font-mono text-xs">
-                  <span className="text-slate-400">PREVIEW SPECTRUM:</span>
+                <div className="flex items-center justify-between bg-muted/30 px-4 py-2 rounded-xl border border-border font-mono text-xs">
+                  <span className="text-muted-foreground">PREVIEW SPECTRUM:</span>
                   <div className="flex gap-1.5">
                     <button
                       onClick={() => setActivePreviewFilter('rgb')}
-                      className={`px-3 py-1 rounded-lg font-bold transition-colors ${activePreviewFilter === 'rgb' ? 'bg-emerald-500 text-slate-950' : 'text-slate-400 hover:text-slate-200'}`}
+                      className={`px-3 py-1 rounded-lg font-bold transition-colors ${activePreviewFilter === 'rgb' ? 'bg-emerald-500 text-slate-950' : 'text-muted-foreground hover:text-foreground'}`}
                     >
                       RGB
                     </button>
                     <button
                       onClick={() => setActivePreviewFilter('uv')}
-                      className={`px-3 py-1 rounded-lg font-bold transition-colors ${activePreviewFilter === 'uv' ? 'bg-purple-500 text-white' : 'text-slate-400 hover:text-slate-200'}`}
+                      className={`px-3 py-1 rounded-lg font-bold transition-colors ${activePreviewFilter === 'uv' ? 'bg-purple-500 text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                     >
                       UV ROT
                     </button>
                     <button
                       onClick={() => setActivePreviewFilter('nir')}
-                      className={`px-3 py-1 rounded-lg font-bold transition-colors ${activePreviewFilter === 'nir' ? 'bg-blue-500 text-white' : 'text-slate-400 hover:text-slate-200'}`}
+                      className={`px-3 py-1 rounded-lg font-bold transition-colors ${activePreviewFilter === 'nir' ? 'bg-blue-500 text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                     >
                       NIR BRIX
                     </button>
@@ -276,7 +276,7 @@ export const UploadPage: React.FC = () => {
             <button
               onClick={triggerCameraSimulation}
               disabled={isCameraActive}
-              className="w-full sm:w-auto flex items-center justify-center gap-3 px-6 py-3 rounded-2xl bg-slate-900/90 border border-blue-500/40 text-blue-300 text-xs font-mono font-bold hover:bg-blue-950/60 hover:border-blue-400 transition-all shadow-lg shadow-blue-950/30 disabled:opacity-50 cursor-pointer"
+              className="w-full sm:w-auto flex items-center justify-center gap-3 px-6 py-3 rounded-2xl bg-muted/40 border border-blue-500/40 text-blue-300 text-xs font-mono font-bold hover:bg-blue-950/60 hover:border-blue-400 transition-all shadow-lg shadow-blue-950/30 disabled:opacity-50 cursor-pointer"
             >
               <Camera className={`h-4 w-4 ${isCameraActive ? 'animate-ping text-blue-400' : ''}`} />
               <span>{isCameraActive ? 'SYNCHRONIZING WITH LINE CAMERA #04...' : 'SIMULATE LIVE CONVEYOR CAMERA CAPTURE'}</span>
@@ -294,7 +294,7 @@ export const UploadPage: React.FC = () => {
 
         {/* Right Side: Quick Testing & Configuration (5 cols) */}
         <div className="lg:col-span-5 space-y-6">
-          <Card title="Quick Test Sample Library" subtitle="Select pre-loaded industrial produce for instant demo" glow={!!preview}>
+          <Card title="Quick Test Sample Library" subtitle="Select pre-loaded industrial produce for instant demo">
             <div className="grid gap-3">
               {sampleImages.map((sample, idx) => (
                 <div
@@ -303,10 +303,10 @@ export const UploadPage: React.FC = () => {
                   className={`flex items-center gap-3.5 p-3 rounded-2xl border transition-all duration-200 cursor-pointer group ${
                     preview === sample.url
                       ? 'bg-emerald-500/20 border-emerald-400 shadow-lg shadow-emerald-950/60 scale-[1.01]'
-                      : 'bg-slate-900/70 border-white/10 hover:border-slate-600 hover:bg-slate-800/60'
+                      : 'bg-muted/50/70 border-border hover:border-slate-600 hover:bg-accent/60'
                   }`}
                 >
-                  <div className="h-14 w-14 rounded-xl overflow-hidden shrink-0 bg-slate-800 border border-white/15 relative">
+                  <div className="h-14 w-14 rounded-xl overflow-hidden shrink-0 bg-accent border border-border relative">
                     <img src={sample.url} alt={sample.name} className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-300" />
                     {preview === sample.url && (
                       <div className="absolute inset-0 bg-emerald-500/30 flex items-center justify-center">
@@ -315,8 +315,8 @@ export const UploadPage: React.FC = () => {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs font-extrabold text-slate-100 truncate group-hover:text-emerald-300 transition-colors">{sample.name}</div>
-                    <div className="text-[10px] text-slate-400 font-mono mt-1">Target Crop: <span className="text-slate-200 font-bold">{sample.type}</span></div>
+                    <div className="text-xs font-extrabold text-foreground truncate group-hover:text-emerald-300 transition-colors">{sample.name}</div>
+                    <div className="text-[10px] text-muted-foreground font-mono mt-1">Target Crop: <span className="text-foreground font-bold">{sample.type}</span></div>
                   </div>
                   <Badge 
                     label={sample.expectedGrade === 'Multi' ? 'Multi-Item' : `Gr. ${sample.expectedGrade}`} 
@@ -330,9 +330,9 @@ export const UploadPage: React.FC = () => {
           </Card>
 
           {/* Action Card */}
-          <Card className="bg-gradient-to-br from-slate-900/90 via-slate-900/80 to-emerald-950/60 border-emerald-500/40 shadow-2xl">
+          <Card className="bg-gradient-to-br from-slate-900/90 via-slate-900/80 to-emerald-950/60 border-emerald-500/40 shadow-lg">
             <div className="space-y-5">
-              <div className="flex items-center justify-between font-mono text-xs text-slate-300 border-b border-white/10 pb-3">
+              <div className="flex items-center justify-between font-mono text-xs text-muted-foreground border-b border-border pb-3">
                 <span className="flex items-center gap-2">
                   <Layers className="h-4 w-4 text-emerald-400" />
                   <span>TARGET TENSOR:</span>
@@ -343,10 +343,10 @@ export const UploadPage: React.FC = () => {
               <button
                 onClick={handleStartInspection}
                 disabled={!preview}
-                className={`w-full py-4 px-6 rounded-2xl font-extrabold text-sm flex items-center justify-center gap-3 transition-all shadow-2xl ${
+                className={`w-full py-4 px-6 rounded-2xl font-extrabold text-sm flex items-center justify-center gap-3 transition-all shadow-lg ${
                   preview
-                    ? 'glass-button-primary cursor-pointer'
-                    : 'bg-slate-800 text-slate-500 border border-white/10 cursor-not-allowed'
+                    ? 'bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer'
+                    : 'bg-accent text-muted-foreground border border-border cursor-not-allowed'
                 }`}
               >
                 <Scan className="h-5 w-5 animate-pulse" />
@@ -354,7 +354,7 @@ export const UploadPage: React.FC = () => {
                 <ArrowRight className="h-4 w-4" />
               </button>
 
-              <div className="text-center text-[11px] text-slate-400 font-mono leading-relaxed bg-slate-950/60 p-2.5 rounded-xl border border-white/5">
+              <div className="text-center text-[11px] text-muted-foreground font-mono leading-relaxed bg-background/60 p-2.5 rounded-xl border border-border">
                 Runs 12-stage automated vision pipeline (CLAHE, Chromatic CV, HSV Rot &amp; Spot Indexing)
               </div>
             </div>

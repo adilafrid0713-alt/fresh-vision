@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Save, RefreshCw, CheckCircle2 } from 'lucide-react';
-import { Card } from '../components/common/Card';
+import { Card } from '../components/ui/Card';
 import { useSettingsStore } from '../store/settingsStore';
 
 export const SettingsPage: React.FC = () => {
@@ -19,21 +19,21 @@ export const SettingsPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-100 tracking-tight">Platform Configuration &amp; Sensitivity</h1>
-          <p className="text-xs text-slate-400">Tune automated feature detection thresholds, quality grading sensitivity, and conveyor line IDs</p>
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">Platform Configuration &amp; Sensitivity</h1>
+          <p className="text-xs text-muted-foreground">Tune automated feature detection thresholds, quality grading sensitivity, and conveyor line IDs</p>
         </div>
 
         <div className="flex items-center gap-3">
           <button
             onClick={resetSettings}
-            className="glass-button-secondary flex items-center gap-2 px-4 py-2 rounded-xl text-xs"
+            className="bg-secondary text-secondary-foreground hover:bg-secondary/80 border flex items-center gap-2 px-4 py-2 rounded-xl text-xs"
           >
             <RefreshCw className="h-4 w-4" />
             <span>Reset Defaults</span>
           </button>
           <button
             onClick={handleSave}
-            className="glass-button-primary flex items-center gap-2 px-6 py-2 rounded-xl text-xs font-bold"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-2 px-6 py-2 rounded-xl text-xs font-bold"
           >
             <Save className="h-4 w-4" />
             <span>Save Changes</span>
@@ -42,8 +42,8 @@ export const SettingsPage: React.FC = () => {
       </div>
 
       {saved && (
-        <div className="p-4 rounded-xl bg-emerald-950/90 border border-emerald-500/50 text-emerald-300 text-xs flex items-center gap-3 shadow-lg shadow-emerald-950/50 animate-bounce">
-          <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />
+        <div className="p-4 rounded-xl bg-primary/10 border border-cyan-500/50 text-primary text-xs flex items-center gap-3 shadow-lg shadow-cyan-950/50 animate-bounce">
+          <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
           <span>System configuration successfully applied to vision processing engine.</span>
         </div>
       )}
@@ -60,8 +60,8 @@ export const SettingsPage: React.FC = () => {
                 {categorySettings.map((setting) => (
                   <div key={setting.key} className="pt-4 first:pt-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="max-w-md">
-                      <span className="text-sm font-semibold text-slate-200 font-mono">{setting.key}</span>
-                      <p className="text-xs text-slate-400 mt-0.5">{setting.description}</p>
+                      <span className="text-sm font-semibold text-foreground font-mono">{setting.key}</span>
+                      <p className="text-xs text-muted-foreground mt-0.5">{setting.description}</p>
                     </div>
 
                     <div className="w-full sm:w-48 shrink-0">
@@ -70,8 +70,8 @@ export const SettingsPage: React.FC = () => {
                           onClick={() => updateSetting(setting.key, !setting.value)}
                           className={`w-full py-2 px-4 rounded-xl text-xs font-bold transition-all border ${
                             setting.value
-                              ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40 shadow-sm'
-                              : 'bg-slate-900 text-slate-400 border-white/10'
+                              ? 'bg-primary/10 text-primary border-primary/30 shadow-sm'
+                              : 'bg-muted/50 text-muted-foreground border-border'
                           }`}
                         >
                           {setting.value ? 'ENABLED' : 'DISABLED'}
@@ -85,9 +85,9 @@ export const SettingsPage: React.FC = () => {
                             step="0.05"
                             value={setting.value}
                             onChange={(e) => updateSetting(setting.key, parseFloat(e.target.value))}
-                            className="w-full accent-emerald-500 cursor-pointer bg-slate-800 rounded-lg h-2"
+                            className="w-full accent-cyan-500 cursor-pointer bg-accent rounded-lg h-2"
                           />
-                          <div className="text-right font-mono text-xs font-bold text-emerald-400">
+                          <div className="text-right font-mono text-xs font-bold text-primary">
                             {setting.value}
                           </div>
                         </div>
@@ -96,7 +96,7 @@ export const SettingsPage: React.FC = () => {
                           type="text"
                           value={setting.value as string}
                           onChange={(e) => updateSetting(setting.key, e.target.value)}
-                          className="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-slate-200 font-mono focus:outline-none focus:border-emerald-500"
+                          className="w-full bg-background border border-border rounded-xl px-3 py-1.5 text-xs text-foreground font-mono focus:outline-none focus:border-cyan-500"
                         />
                       )}
                     </div>

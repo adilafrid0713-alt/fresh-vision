@@ -5,8 +5,8 @@ import {
   RefreshCw, Layers, Eye, FileText, Thermometer, Box, ArrowLeft,
   ThumbsUp, ThumbsDown, Sparkles, CheckCircle, Tag, ChevronRight
 } from 'lucide-react';
-import { Card } from '../components/common/Card';
-import { Badge } from '../components/common/Badge';
+import { Card } from '../components/ui/Card';
+import { Badge } from '../components/ui/Badge';
 import { useInspectionStore } from '../store/inspectionStore';
 
 export const ResultPage: React.FC = () => {
@@ -19,16 +19,16 @@ export const ResultPage: React.FC = () => {
   if (!activeInspection) {
     return (
       <div className="flex flex-col items-center justify-center h-[65vh] space-y-5 animate-fadeIn">
-        <div className="p-5 rounded-3xl bg-slate-900/90 border border-emerald-500/30 text-emerald-400 shadow-[0_0_25px_rgba(16,185,129,0.2)]">
+        <div className="p-5 rounded-3xl bg-muted/40 border border-emerald-500/30 text-emerald-400 shadow-[0_0_25px_rgba(16,185,129,0.2)]">
           <AlertTriangle className="h-10 w-10 animate-bounce" />
         </div>
-        <h2 className="text-2xl font-extrabold text-slate-100 tracking-tight">No Active Inspection Found</h2>
-        <p className="text-sm text-slate-400 max-w-md text-center leading-relaxed">
+        <h2 className="text-2xl font-extrabold text-foreground tracking-tight">No Active Inspection Found</h2>
+        <p className="text-sm text-muted-foreground max-w-md text-center leading-relaxed">
           Please upload a produce photograph or high-speed conveyor frame to initiate the AI multi-spectral vision analysis.
         </p>
         <button
           onClick={() => navigate('/upload')}
-          className="glass-button-primary px-8 py-3.5 rounded-2xl text-sm font-bold shadow-2xl cursor-pointer"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-3.5 rounded-2xl text-sm font-bold shadow-lg cursor-pointer"
         >
           Return to Upload Console
         </button>
@@ -93,37 +93,37 @@ export const ResultPage: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto space-y-8 pb-12 animate-fadeIn">
       {/* Navigation & Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/60 backdrop-blur-xl p-5 rounded-2xl border border-white/10 shadow-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-muted/50/60 backdrop-blur-sm p-5 rounded-2xl border border-border shadow-xl">
         <div className="flex items-center gap-3.5">
           <button
             onClick={() => navigate('/dashboard')}
-            className="p-2.5 rounded-xl bg-slate-900 border border-white/10 text-slate-400 hover:text-emerald-300 transition-colors shadow-inner"
+            className="p-2.5 rounded-xl bg-muted/50 border border-border text-muted-foreground hover:text-emerald-300 transition-colors shadow-sm"
             title="Return to Dashboard"
           >
             <ArrowLeft className="h-5 w-5" />
           </button>
           <div>
             <div className="flex items-center gap-2.5">
-              <h1 className="text-2xl font-extrabold text-slate-100 tracking-tight font-sans">Inspection Audit Report</h1>
+              <h1 className="text-2xl font-extrabold text-foreground tracking-tight font-sans">Inspection Audit Report</h1>
               <span className="font-mono text-xs text-emerald-400 font-bold bg-emerald-950/80 px-2.5 py-0.5 rounded-md border border-emerald-500/30">
                 {id}
               </span>
             </div>
-            <p className="text-xs text-slate-400 font-mono mt-0.5">Completed at {timestamp} • Inference Latency: <span className="text-slate-200 font-bold">{processing_time_ms}ms</span></p>
+            <p className="text-xs text-muted-foreground font-mono mt-0.5">Completed at {timestamp} • Inference Latency: <span className="text-foreground font-bold">{processing_time_ms}ms</span></p>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
           <button
             onClick={() => downloadReport('csv')}
-            className="glass-button-secondary flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold cursor-pointer"
+            className="bg-secondary text-secondary-foreground hover:bg-secondary/80 border flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold cursor-pointer"
           >
             <Download className="h-4 w-4 text-blue-400" />
             <span>Export CSV Data</span>
           </button>
           <button
             onClick={() => downloadReport('pdf')}
-            className="glass-button-primary flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-bold cursor-pointer"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-bold cursor-pointer"
           >
             <FileText className="h-4 w-4" />
             <span>Download PDF Certificate</span>
@@ -135,14 +135,14 @@ export const ResultPage: React.FC = () => {
       <div className="grid gap-8 lg:grid-cols-12 items-start">
         {/* Left: Multi-Layer Visualizer (7 cols) */}
         <div className="lg:col-span-7 space-y-4">
-          <Card className="p-3 bg-slate-950/90 border-emerald-500/30 shadow-2xl">
+          <Card className="p-3 bg-muted/30 border-emerald-500/30 shadow-lg">
             {/* View Mode Toggle Bar */}
-            <div className="flex items-center justify-between bg-slate-900/90 p-1.5 rounded-xl border border-white/10 mb-3 font-mono text-xs">
+            <div className="flex items-center justify-between bg-muted/40 p-1.5 rounded-xl border border-border mb-3 font-mono text-xs">
               <div className="flex gap-1.5">
                 <button
                   onClick={() => setViewMode('raw')}
                   className={`px-3.5 py-2 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
-                    viewMode === 'raw' ? 'bg-slate-800 text-slate-100 font-bold shadow border border-white/10' : 'text-slate-400 hover:text-slate-200'
+                    viewMode === 'raw' ? 'bg-accent text-foreground font-bold shadow border border-border' : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   <Eye className="h-3.5 w-3.5" />
@@ -151,7 +151,7 @@ export const ResultPage: React.FC = () => {
                 <button
                   onClick={() => setViewMode('bbox')}
                   className={`px-3.5 py-2 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
-                    viewMode === 'bbox' ? 'bg-emerald-500 text-slate-950 font-extrabold shadow-lg shadow-emerald-500/30' : 'text-slate-400 hover:text-slate-200'
+                    viewMode === 'bbox' ? 'bg-emerald-500 text-slate-950 font-extrabold shadow-lg shadow-emerald-500/30' : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   <Box className="h-3.5 w-3.5" />
@@ -160,7 +160,7 @@ export const ResultPage: React.FC = () => {
                 <button
                   onClick={() => setViewMode('heatmap')}
                   className={`px-3.5 py-2 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
-                    viewMode === 'heatmap' ? 'bg-red-500 text-white font-extrabold shadow-lg shadow-red-500/30' : 'text-slate-400 hover:text-slate-200'
+                    viewMode === 'heatmap' ? 'bg-red-500 text-foreground font-extrabold shadow-lg shadow-red-500/30' : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   <Layers className="h-3.5 w-3.5" />
@@ -173,7 +173,7 @@ export const ResultPage: React.FC = () => {
             </div>
 
             {/* Visualizer Display Box */}
-            <div className="relative aspect-square rounded-2xl overflow-hidden bg-slate-950 border border-white/10 flex items-center justify-center shadow-inner">
+            <div className="relative aspect-square rounded-2xl overflow-hidden bg-background border border-border flex items-center justify-center shadow-sm">
               <img
                 src={raw_image_url}
                 alt={food_type}
@@ -203,7 +203,7 @@ export const ResultPage: React.FC = () => {
                     const badgeColor =
                       status === 'Good to Consume' ? 'bg-emerald-500 text-slate-950' :
                       status === 'Processing / Juice Only' ? 'bg-amber-500 text-slate-950' :
-                      'bg-red-600 text-white';
+                      'bg-red-600 text-foreground';
 
                     return (
                       <div
@@ -222,12 +222,12 @@ export const ResultPage: React.FC = () => {
                           <span className={`text-[11px] font-mono font-extrabold px-2 py-0.5 rounded shadow truncate ${badgeColor}`}>
                             #{idx + 1} {item.food_type}
                           </span>
-                          <span className="text-[10px] font-mono font-bold bg-slate-950/90 text-slate-100 px-1.5 py-0.5 rounded border border-white/20 shrink-0 shadow">
+                          <span className="text-[10px] font-mono font-bold bg-muted/30 text-foreground px-1.5 py-0.5 rounded border border-border shrink-0 shadow">
                             Gr.{item.metrics.quality_grade}
                           </span>
                         </div>
 
-                        <div className="bg-slate-950/90 backdrop-blur px-2 py-1 rounded-lg border border-white/10 text-[11px] font-mono font-bold text-slate-100 self-start truncate max-w-full shadow-lg">
+                        <div className="bg-muted/30 backdrop-blur px-2 py-1 rounded-lg border border-border text-[11px] font-mono font-bold text-foreground self-start truncate max-w-full shadow-lg">
                           {status === 'Good to Consume' ? '✅ Good' : status === 'Processing / Juice Only' ? '⚠️ Processing' : '❌ Discard'}
                         </div>
                       </div>
@@ -239,7 +239,7 @@ export const ResultPage: React.FC = () => {
               {/* Simulated OpenCV Defect Heatmap Layer */}
               {viewMode === 'heatmap' && (
                 <div className="absolute inset-0 bg-gradient-to-tr from-red-600/30 via-transparent to-amber-500/20 pointer-events-none flex items-center justify-center">
-                  <div className="bg-red-950/95 border border-red-500/60 text-red-300 text-xs font-mono font-bold px-4 py-2 rounded-xl shadow-2xl flex items-center gap-2.5">
+                  <div className="bg-red-950/95 border border-red-500/60 text-red-300 text-xs font-mono font-bold px-4 py-2 rounded-xl shadow-lg flex items-center gap-2.5">
                     <span className="h-2.5 w-2.5 rounded-full bg-red-500 animate-ping" />
                     <span>HSV COLOR DEGRADATION &amp; BRUISE MAPPING ACTIVE</span>
                   </div>
@@ -247,7 +247,7 @@ export const ResultPage: React.FC = () => {
               )}
             </div>
 
-            <div className="mt-3.5 flex items-center justify-between text-xs font-mono text-slate-400 px-3">
+            <div className="mt-3.5 flex items-center justify-between text-xs font-mono text-muted-foreground px-3">
               <span className="flex items-center gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                 <span>MODEL: OPTICAL-VISION-v2.pt</span>
@@ -268,7 +268,7 @@ export const ResultPage: React.FC = () => {
           }`}>
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-xs font-mono text-slate-400 uppercase tracking-wider block font-bold">CLASSIFIED QUALITY GRADE</span>
+                <span className="text-xs font-mono text-muted-foreground uppercase tracking-wider block font-bold">CLASSIFIED QUALITY GRADE</span>
                 <div className="flex items-center gap-3 mt-1.5">
                   <span className={`text-4xl font-extrabold font-mono tracking-tight ${
                     metrics.quality_grade === 'A' ? 'text-emerald-400' :
@@ -279,7 +279,7 @@ export const ResultPage: React.FC = () => {
                     GRADE {metrics.quality_grade}
                   </span>
                 </div>
-                <span className="text-xs text-slate-300 mt-1.5 block font-medium">
+                <span className="text-xs text-muted-foreground mt-1.5 block font-medium">
                   {metrics.quality_grade === 'A' ? 'Excellent - Premium Retail Export Standards' :
                    metrics.quality_grade === 'B' ? 'Good - Standard Supermarket Distribution Grade' :
                    metrics.quality_grade === 'C' ? 'Acceptable - Immediate Puree / Juice Processing' :
@@ -307,12 +307,12 @@ export const ResultPage: React.FC = () => {
               {/* Freshness Score */}
               <div>
                 <div className="flex justify-between text-xs mb-1.5">
-                  <span className="text-slate-400 font-bold">FRESHNESS INDEX</span>
+                  <span className="text-muted-foreground font-bold">FRESHNESS INDEX</span>
                   <span className={`font-extrabold ${metrics.freshness_score >= 85 ? 'text-emerald-400' : metrics.freshness_score >= 65 ? 'text-blue-400' : metrics.freshness_score >= 50 ? 'text-amber-400' : 'text-red-400'}`}>
                     {metrics.freshness_score}%
                   </span>
                 </div>
-                <div className="h-3 w-full bg-slate-950 rounded-full overflow-hidden p-0.5 border border-white/10">
+                <div className="h-3 w-full bg-background rounded-full overflow-hidden p-0.5 border border-border">
                   <div 
                     className={`h-full rounded-full transition-all duration-1000 bg-gradient-to-r ${metrics.freshness_score >= 85 ? 'from-emerald-500 to-teal-400' : metrics.freshness_score >= 65 ? 'from-blue-500 to-indigo-400' : metrics.freshness_score >= 50 ? 'from-amber-500 to-orange-400' : 'from-red-600 to-rose-400'}`} 
                     style={{ width: `${metrics.freshness_score}%` }} 
@@ -322,17 +322,17 @@ export const ResultPage: React.FC = () => {
 
               {/* Multi-Factor AI Quality Sub-Indices */}
               {metrics.chromaticity_index !== undefined && (
-                <div className="grid grid-cols-3 gap-2.5 py-3 border-y border-white/10 text-[11px]">
-                  <div className="bg-slate-900/90 p-2.5 rounded-xl border border-white/10 shadow">
-                    <span className="text-slate-400 block mb-1 text-[10px] font-bold uppercase">COLOR HEALTH</span>
+                <div className="grid grid-cols-3 gap-2.5 py-3 border-y border-border text-[11px]">
+                  <div className="bg-muted/40 p-2.5 rounded-xl border border-border shadow">
+                    <span className="text-muted-foreground block mb-1 text-[10px] font-bold uppercase">COLOR HEALTH</span>
                     <span className="text-emerald-400 font-extrabold text-sm">{metrics.chromaticity_index}%</span>
                   </div>
-                  <div className="bg-slate-900/90 p-2.5 rounded-xl border border-white/10 shadow">
-                    <span className="text-slate-400 block mb-1 text-[10px] font-bold uppercase">STRUCTURE</span>
+                  <div className="bg-muted/40 p-2.5 rounded-xl border border-border shadow">
+                    <span className="text-muted-foreground block mb-1 text-[10px] font-bold uppercase">STRUCTURE</span>
                     <span className="text-blue-400 font-extrabold text-sm">{metrics.structural_integrity_index}%</span>
                   </div>
-                  <div className="bg-slate-900/90 p-2.5 rounded-xl border border-white/10 shadow">
-                    <span className="text-slate-400 block mb-1 text-[10px] font-bold uppercase">DEFECT FREE</span>
+                  <div className="bg-muted/40 p-2.5 rounded-xl border border-border shadow">
+                    <span className="text-muted-foreground block mb-1 text-[10px] font-bold uppercase">DEFECT FREE</span>
                     <span className="text-purple-400 font-extrabold text-sm">{metrics.defect_freedom_index}%</span>
                   </div>
                 </div>
@@ -341,10 +341,10 @@ export const ResultPage: React.FC = () => {
               {/* Confidence Score */}
               <div>
                 <div className="flex justify-between text-xs mb-1.5">
-                  <span className="text-slate-400 font-bold">AI MODEL CONFIDENCE</span>
+                  <span className="text-muted-foreground font-bold">AI MODEL CONFIDENCE</span>
                   <span className="font-extrabold text-blue-400">{(metrics.confidence <= 1 ? metrics.confidence * 100 : metrics.confidence).toFixed(1)}%</span>
                 </div>
-                <div className="h-3 w-full bg-slate-950 rounded-full overflow-hidden p-0.5 border border-white/10">
+                <div className="h-3 w-full bg-background rounded-full overflow-hidden p-0.5 border border-border">
                   <div 
                     className="h-full rounded-full bg-gradient-to-r from-blue-500 to-indigo-400 transition-all duration-1000" 
                     style={{ width: `${metrics.confidence <= 1 ? metrics.confidence * 100 : metrics.confidence}%` }} 
@@ -355,12 +355,12 @@ export const ResultPage: React.FC = () => {
               {/* Surface Damage % */}
               <div>
                 <div className="flex justify-between text-xs mb-1.5">
-                  <span className="text-slate-400 font-bold">SURFACE DEFECT &amp; BRUISE AREA</span>
-                  <span className={`font-extrabold ${metrics.damage_percentage > 20 ? 'text-red-400' : 'text-slate-200'}`}>
+                  <span className="text-muted-foreground font-bold">SURFACE DEFECT &amp; BRUISE AREA</span>
+                  <span className={`font-extrabold ${metrics.damage_percentage > 20 ? 'text-red-400' : 'text-foreground'}`}>
                     {metrics.damage_percentage}%
                   </span>
                 </div>
-                <div className="h-3 w-full bg-slate-950 rounded-full overflow-hidden p-0.5 border border-white/10">
+                <div className="h-3 w-full bg-background rounded-full overflow-hidden p-0.5 border border-border">
                   <div 
                     className={`h-full rounded-full transition-all duration-1000 ${metrics.damage_percentage > 20 ? 'bg-red-500' : 'bg-amber-400'}`}
                     style={{ width: `${Math.min(100, metrics.damage_percentage * 1.5)}%` }} 
@@ -371,28 +371,28 @@ export const ResultPage: React.FC = () => {
           </Card>
 
           {/* Shelf Life & Recommendation */}
-          <Card title="Storage &amp; Packaging Action Plan" glow>
+          <Card title="Storage &amp; Packaging Action Plan">
             <div className="space-y-4">
-              <div className="flex items-center gap-4 p-3.5 rounded-2xl bg-slate-900/90 border border-white/10 shadow-md">
+              <div className="flex items-center gap-4 p-3.5 rounded-2xl bg-muted/40 border border-border shadow-md">
                 <div className="p-3.5 rounded-xl bg-amber-500/15 text-amber-400 border border-amber-500/30 shrink-0">
                   <Thermometer className="h-6 w-6 animate-pulse" />
                 </div>
                 <div>
-                  <span className="text-xs font-mono text-slate-400 font-bold uppercase block">ESTIMATED REMAINING SHELF LIFE</span>
+                  <span className="text-xs font-mono text-muted-foreground font-bold uppercase block">ESTIMATED REMAINING SHELF LIFE</span>
                   <div className="text-2xl font-extrabold font-mono text-amber-400 mt-0.5">
-                    ~{metrics.shelf_life_days} <span className="text-xs font-normal text-slate-300">days at 4°C Cold Storage</span>
+                    ~{metrics.shelf_life_days} <span className="text-xs font-normal text-muted-foreground">days at 4°C Cold Storage</span>
                   </div>
                 </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-slate-900/90 border border-emerald-500/30 text-xs leading-relaxed shadow-md">
+              <div className="p-4 rounded-2xl bg-muted/40 border border-emerald-500/30 text-xs leading-relaxed shadow-md">
                 <span className="font-mono font-extrabold text-emerald-400 block mb-1 tracking-wider uppercase">ENTERPRISE RECOMMENDATION:</span>
-                <p className="text-slate-200 font-medium">{metrics.recommendation}</p>
+                <p className="text-foreground font-medium">{metrics.recommendation}</p>
               </div>
 
               <button
                 onClick={handleInspectAnother}
-                className="w-full glass-button-primary py-3.5 rounded-2xl text-sm font-bold flex items-center justify-center gap-2.5 shadow-xl cursor-pointer"
+                className="w-full bg-primary text-primary-foreground hover:bg-primary/90 py-3.5 rounded-2xl text-sm font-bold flex items-center justify-center gap-2.5 shadow-xl cursor-pointer"
               >
                 <RefreshCw className="h-4 w-4" />
                 <span>Inspect Another Produce Item</span>
@@ -404,14 +404,14 @@ export const ResultPage: React.FC = () => {
 
       {/* Item-by-Item Consumption & Quality Breakdown Console */}
       <div id="item-breakdown-section" className="space-y-6 pt-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-emerald-500/15 to-blue-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-mono font-bold mb-2.5 shadow-sm">
               <Sparkles className="h-3.5 w-3.5 animate-spin" />
               <span>INDIVIDUAL ITEM CONSUMPTION ADVISORY</span>
             </div>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-100 tracking-tight font-sans">Item-by-Item Consumption Breakdown</h2>
-            <p className="text-sm text-slate-400">
+            <h2 className="text-2xl md:text-3xl font-extrabold text-foreground tracking-tight font-sans">Item-by-Item Consumption Breakdown</h2>
+            <p className="text-sm text-muted-foreground">
               Detailed multi-item classification indicating which specific produce items are safe to consume, which require extraction, and exact defect rationale.
             </p>
           </div>
@@ -421,7 +421,7 @@ export const ResultPage: React.FC = () => {
             <button
               onClick={() => setStatusFilter('all')}
               className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
-                statusFilter === 'all' ? 'bg-slate-800 text-slate-100 border border-emerald-500/50 shadow-lg' : 'bg-slate-900/70 text-slate-400 border border-white/10 hover:bg-slate-800/60 hover:text-slate-200'
+                statusFilter === 'all' ? 'bg-accent text-foreground border border-emerald-500/50 shadow-lg' : 'bg-muted/50/70 text-muted-foreground border border-border hover:bg-accent/60 hover:text-foreground'
               }`}
             >
               <Tag className="h-3.5 w-3.5 text-blue-400" />
@@ -430,7 +430,7 @@ export const ResultPage: React.FC = () => {
             <button
               onClick={() => setStatusFilter('Good to Consume')}
               className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
-                statusFilter === 'Good to Consume' ? 'bg-emerald-500/25 text-emerald-300 border border-emerald-400 shadow-lg shadow-emerald-950/60' : 'bg-slate-900/70 text-slate-400 border border-white/10 hover:bg-slate-800/60 hover:text-slate-200'
+                statusFilter === 'Good to Consume' ? 'bg-emerald-500/25 text-emerald-300 border border-emerald-400 shadow-lg shadow-emerald-950/60' : 'bg-muted/50/70 text-muted-foreground border border-border hover:bg-accent/60 hover:text-foreground'
               }`}
             >
               <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
@@ -439,7 +439,7 @@ export const ResultPage: React.FC = () => {
             <button
               onClick={() => setStatusFilter('Processing / Juice Only')}
               className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
-                statusFilter === 'Processing / Juice Only' ? 'bg-amber-500/25 text-amber-300 border border-amber-400 shadow-lg shadow-amber-950/60' : 'bg-slate-900/70 text-slate-400 border border-white/10 hover:bg-slate-800/60 hover:text-slate-200'
+                statusFilter === 'Processing / Juice Only' ? 'bg-amber-500/25 text-amber-300 border border-amber-400 shadow-lg shadow-amber-950/60' : 'bg-muted/50/70 text-muted-foreground border border-border hover:bg-accent/60 hover:text-foreground'
               }`}
             >
               <AlertTriangle className="h-3.5 w-3.5 text-amber-400" />
@@ -448,7 +448,7 @@ export const ResultPage: React.FC = () => {
             <button
               onClick={() => setStatusFilter('Not Good to Consume (Discard)')}
               className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
-                statusFilter === 'Not Good to Consume (Discard)' ? 'bg-red-500/25 text-red-300 border border-red-400 shadow-lg shadow-red-950/60' : 'bg-slate-900/70 text-slate-400 border border-white/10 hover:bg-slate-800/60 hover:text-slate-200'
+                statusFilter === 'Not Good to Consume (Discard)' ? 'bg-red-500/25 text-red-300 border border-red-400 shadow-lg shadow-red-950/60' : 'bg-muted/50/70 text-muted-foreground border border-border hover:bg-accent/60 hover:text-foreground'
               }`}
             >
               <XCircle className="h-3.5 w-3.5 text-red-400" />
@@ -492,7 +492,7 @@ export const ResultPage: React.FC = () => {
                 id={`item-card-${item.id}`}
                 onClick={() => setSelectedItemId(item.id)}
                 className={`rounded-2xl border-2 p-6 transition-all duration-300 flex flex-col justify-between space-y-4 cursor-pointer group ${borderCardClass} ${
-                  isSelected ? 'ring-4 ring-emerald-500/60 scale-[1.02] shadow-2xl' : ''
+                  isSelected ? 'ring-4 ring-emerald-500/60 scale-[1.02] shadow-lg' : ''
                 }`}
               >
                 <div>
@@ -502,7 +502,7 @@ export const ResultPage: React.FC = () => {
                       <span className="text-[11px] font-mono font-bold text-emerald-400 uppercase tracking-wider block">
                         ITEM #{idx + 1} • {item.food_type}
                       </span>
-                      <h3 className="text-lg font-extrabold text-slate-100 mt-0.5 tracking-tight group-hover:text-emerald-300 transition-colors">
+                      <h3 className="text-lg font-extrabold text-foreground mt-0.5 tracking-tight group-hover:text-emerald-300 transition-colors">
                         {item.name}
                       </h3>
                     </div>
@@ -517,30 +517,30 @@ export const ResultPage: React.FC = () => {
                   {statusBadge}
 
                   {/* Summary Box */}
-                  <p className="text-xs text-slate-300 mt-3.5 p-3.5 rounded-xl bg-slate-950/80 border border-white/10 leading-relaxed font-medium">
+                  <p className="text-xs text-muted-foreground mt-3.5 p-3.5 rounded-xl bg-muted/50 border border-border leading-relaxed font-medium">
                     {item.summary}
                   </p>
 
                   {/* Why Good vs Why Bad Sections */}
                   <div className="mt-4 space-y-3">
                     {/* Why is it Good */}
-                    <div className="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/30 space-y-1.5 shadow-inner">
+                    <div className="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/30 space-y-1.5 shadow-sm">
                       <div className="flex items-center gap-1.5 text-xs font-extrabold text-emerald-400 font-mono tracking-wide">
                         <ThumbsUp className="h-3.5 w-3.5 shrink-0" />
                         <span>WHY IT IS GOOD / SAFE:</span>
                       </div>
-                      <p className="text-[11px] text-slate-300 leading-normal">
+                      <p className="text-[11px] text-muted-foreground leading-normal">
                         {item.good_bad_explanation.why_good}
                       </p>
                     </div>
 
                     {/* Why is it Bad */}
-                    <div className="p-3.5 rounded-xl bg-red-950/30 border border-red-500/30 space-y-1.5 shadow-inner">
+                    <div className="p-3.5 rounded-xl bg-red-950/30 border border-red-500/30 space-y-1.5 shadow-sm">
                       <div className="flex items-center gap-1.5 text-xs font-extrabold text-red-400 font-mono tracking-wide">
                         <ThumbsDown className="h-3.5 w-3.5 shrink-0" />
                         <span>WHY IT IS BAD / DEFECTS:</span>
                       </div>
-                      <p className="text-[11px] text-slate-300 leading-normal">
+                      <p className="text-[11px] text-muted-foreground leading-normal">
                         {item.good_bad_explanation.why_bad}
                       </p>
                     </div>
@@ -548,22 +548,22 @@ export const ResultPage: React.FC = () => {
                 </div>
 
                 {/* Footer Metrics & Highlight Button */}
-                <div className="pt-4 border-t border-white/10 space-y-3.5">
+                <div className="pt-4 border-t border-border space-y-3.5">
                   <div className="grid grid-cols-3 gap-2 text-center font-mono text-[11px]">
-                    <div className="bg-slate-900/90 p-2 rounded-xl border border-white/10 shadow">
-                      <span className="text-slate-400 block text-[10px] font-bold uppercase">FRESHNESS</span>
+                    <div className="bg-muted/40 p-2 rounded-xl border border-border shadow">
+                      <span className="text-muted-foreground block text-[10px] font-bold uppercase">FRESHNESS</span>
                       <span className={`font-extrabold ${item.metrics.freshness_score >= 80 ? 'text-emerald-400' : item.metrics.freshness_score >= 60 ? 'text-amber-400' : 'text-red-400'}`}>
                         {item.metrics.freshness_score}%
                       </span>
                     </div>
-                    <div className="bg-slate-900/90 p-2 rounded-xl border border-white/10 shadow">
-                      <span className="text-slate-400 block text-[10px] font-bold uppercase">DAMAGE</span>
-                      <span className={`font-extrabold ${item.metrics.damage_percentage > 15 ? 'text-red-400' : 'text-slate-200'}`}>
+                    <div className="bg-muted/40 p-2 rounded-xl border border-border shadow">
+                      <span className="text-muted-foreground block text-[10px] font-bold uppercase">DAMAGE</span>
+                      <span className={`font-extrabold ${item.metrics.damage_percentage > 15 ? 'text-red-400' : 'text-foreground'}`}>
                         {item.metrics.damage_percentage}%
                       </span>
                     </div>
-                    <div className="bg-slate-900/90 p-2 rounded-xl border border-white/10 shadow">
-                      <span className="text-slate-400 block text-[10px] font-bold uppercase">CONFIDENCE</span>
+                    <div className="bg-muted/40 p-2 rounded-xl border border-border shadow">
+                      <span className="text-muted-foreground block text-[10px] font-bold uppercase">CONFIDENCE</span>
                       <span className="font-extrabold text-blue-400">
                         {item.metrics.confidence}%
                       </span>
@@ -578,7 +578,7 @@ export const ResultPage: React.FC = () => {
                       setViewMode('bbox');
                       window.scrollTo({ top: 120, behavior: 'smooth' });
                     }}
-                    className="w-full py-2.5 px-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-white/10 text-xs font-bold text-slate-300 hover:text-emerald-300 flex items-center justify-center gap-2 transition-all shadow-md group-hover:border-emerald-500/30"
+                    className="w-full py-2.5 px-3.5 rounded-xl bg-muted/50 hover:bg-accent border border-border text-xs font-bold text-muted-foreground hover:text-emerald-300 flex items-center justify-center gap-2 transition-all shadow-md group-hover:border-emerald-500/30"
                   >
                     <Box className="h-3.5 w-3.5 text-emerald-400" />
                     <span>Locate & Highlight on Vision Frame</span>

@@ -19,17 +19,17 @@ export const Badge: React.FC<BadgeProps> = ({
   const getVariantStyles = () => {
     switch (variant) {
       case 'success':
-        return `bg-gradient-to-r from-emerald-950/90 to-teal-950/90 text-emerald-300 border-emerald-500/40 ${glow ? 'shadow-[0_0_15px_rgba(16,185,129,0.45)] border-emerald-400' : ''}`;
+        return `bg-cyan-500/10 text-cyan-400 border-cyan-500/20 ${glow ? 'shadow-[0_0_15px_rgba(34,211,238,0.2)] border-cyan-400/50' : ''}`;
       case 'warning':
-        return `bg-gradient-to-r from-amber-950/90 to-orange-950/90 text-amber-300 border-amber-500/40 ${glow ? 'shadow-[0_0_15px_rgba(245,158,11,0.45)] border-amber-400' : ''}`;
+        return `bg-amber-500/10 text-amber-400 border-amber-500/20 ${glow ? 'shadow-[0_0_15px_rgba(245,158,11,0.2)] border-amber-400/50' : ''}`;
       case 'danger':
-        return `bg-gradient-to-r from-red-950/90 to-rose-950/90 text-red-300 border-red-500/40 ${glow ? 'shadow-[0_0_15px_rgba(239,68,68,0.45)] border-red-400' : ''}`;
+        return `bg-rose-500/10 text-rose-400 border-rose-500/20 ${glow ? 'shadow-[0_0_15px_rgba(244,63,94,0.2)] border-rose-400/50' : ''}`;
       case 'info':
-        return `bg-gradient-to-r from-blue-950/90 to-indigo-950/90 text-blue-300 border-blue-500/40 ${glow ? 'shadow-[0_0_15px_rgba(59,130,246,0.45)] border-blue-400' : ''}`;
+        return `bg-indigo-500/10 text-indigo-400 border-indigo-500/20 ${glow ? 'shadow-[0_0_15px_rgba(99,102,241,0.2)] border-indigo-400/50' : ''}`;
       case 'premium':
-        return `bg-gradient-to-r from-emerald-500/20 via-teal-500/20 to-blue-500/20 text-emerald-300 border-emerald-400/50 ${glow ? 'shadow-[0_0_20px_rgba(16,185,129,0.5)]' : ''}`;
+        return `bg-violet-500/10 text-violet-400 border-violet-500/20 ${glow ? 'shadow-[0_0_20px_rgba(139,92,246,0.3)] border-violet-400/50' : ''}`;
       default:
-        return 'bg-slate-800/90 text-slate-300 border-slate-700/60 backdrop-blur-md';
+        return 'bg-white/5 text-slate-300 border-white/10 backdrop-blur-md';
     }
   };
 

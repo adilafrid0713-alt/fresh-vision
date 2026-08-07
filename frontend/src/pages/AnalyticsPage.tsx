@@ -2,8 +2,8 @@ import React from 'react';
 import { 
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis 
 } from 'recharts';
-import { Card } from '../components/common/Card';
-import { Badge } from '../components/common/Badge';
+import { Card } from '../components/ui/Card';
+import { Badge } from '../components/ui/Badge';
 
 export const AnalyticsPage: React.FC = () => {
   // Multi-dimensional quality metrics for industrial reporting
