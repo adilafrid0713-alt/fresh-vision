@@ -96,13 +96,14 @@ export const LiveCameraModal: React.FC<LiveCameraModalProps> = ({ isOpen, onClos
 
       const record: InspectionRecord = {
         id: crypto.randomUUID(),
-        batchId: activeBatchNo,
-        foodType: selectedFoodTypeHint,
+        batch_id: activeBatchNo,
+        food_type: selectedFoodTypeHint,
         metrics: result.metrics,
         defects: result.defects,
-        detectedItems: result.detectedItems,
+        detected_items: result.detectedItems,
         timestamp: new Date().toISOString(),
-        rawImageUrl: base64Image,
+        raw_image_url: base64Image,
+        processing_time_ms: 450,
       };
 
       setLastRecord(record);

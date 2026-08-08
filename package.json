@@ -4,8 +4,13 @@
   "private": true,
   "description": "Enterprise Food Quality & Defect Detection App powered by Google Gemini Vision AI",
   "scripts": {
-    "dev": "npm run dev --prefix frontend",
-    "build": "npm run build --prefix frontend",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "dev:backend": "npm run dev --prefix backend",
+    "build": "npm run build --prefix frontend && npm run build --prefix backend",
     "preview": "npm run preview --prefix frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.4"
   }
 }

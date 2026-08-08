@@ -20,6 +20,9 @@ export interface MarketProduct {
   district: string | null;
   state: string | null;
   pinCode: string | null;
+  contactPhone?: string | null;
+  contactEmail?: string | null;
+  contactWhatsApp?: string | null;
   status: string;
   createdAt: string;
   updatedAt: string;
@@ -63,6 +66,18 @@ export const marketService = {
       body: JSON.stringify(data),
     });
     if (!response.ok) throw new Error('Failed to create product listing');
+    return response.json();
+  },
+
+  async updateProduct(id: string, data: Partial<MarketProduct>): Promise<MarketProduct> {
+    const response = await fetch(`${API_URL}/market/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Failed to update product listing');
     return response.json();
   },
 };

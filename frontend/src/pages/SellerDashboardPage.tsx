@@ -3,11 +3,13 @@ import { Package, TrendingUp, DollarSign, Eye, Edit, Trash2 } from 'lucide-react
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
+import { useNavigate } from 'react-router-dom';
 import { marketService } from '../services/marketService'; import type { MarketProduct } from '../services/marketService';
 
 export const SellerDashboardPage: React.FC = () => {
   const [products, setProducts] = useState<MarketProduct[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // In a real app, use the actual authenticated user ID
@@ -117,7 +119,7 @@ export const SellerDashboardPage: React.FC = () => {
                       )}
                     </td>
                     <td className="px-4 py-4 text-right">
-                      <Button variant="outline" size="sm" className="h-8 px-2 mr-2"><Edit className="h-4 w-4" /></Button>
+                      <Button variant="outline" size="sm" className="h-8 px-2 mr-2" onClick={() => navigate(`/market/sell?edit=${product.id}`)}><Edit className="h-4 w-4" /></Button>
                       <Button variant="outline" size="sm" className="h-8 px-2 text-red-500 border-red-500/20 hover:bg-red-500/10"><Trash2 className="h-4 w-4" /></Button>
                     </td>
                   </tr>

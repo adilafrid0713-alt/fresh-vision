@@ -79,6 +79,11 @@ model MarketProduct {
   state             String?
   pinCode           String?
   
+  // Contact Details
+  contactPhone      String?
+  contactEmail      String?
+  contactWhatsApp   String?
+  
   // Status
   status            String   @default("active") // active, paused, sold, deleted
   
