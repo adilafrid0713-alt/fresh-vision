@@ -100,7 +100,7 @@ export const LiveCameraModal: React.FC<LiveCameraModalProps> = ({ isOpen, onClos
         food_type: selectedFoodTypeHint,
         metrics: result.metrics,
         defects: result.defects,
-        detected_items: result.detectedItems,
+        detected_items: result.detected_items,
         timestamp: new Date().toISOString(),
         raw_image_url: base64Image,
         processing_time_ms: 450,

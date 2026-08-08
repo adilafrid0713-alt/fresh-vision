@@ -9,7 +9,7 @@ export const SellProductPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const editId = searchParams.get('edit');
-  const [isEditing, setIsEditing] = useState(!!editId);
+  const isEditing = !!editId;
   const [loading, setLoading] = useState(!!editId);
   
   const [useAIFill, setUseAIFill] = useState(false);
