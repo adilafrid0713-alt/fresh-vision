@@ -180,7 +180,7 @@ export const SellProductPage: React.FC = () => {
       navigate(`/market/product/${savedProduct.id}`);
     } catch (error) {
       console.error('Failed to save listing', error);
-      alert('Failed to save listing. Make sure backend is running.');
+      alert('Unable to save your listing. Please try again.');
     } finally {
       setSubmitting(false);
     }

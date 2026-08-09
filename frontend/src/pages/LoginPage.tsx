@@ -204,7 +204,7 @@ export const LoginPage: React.FC = () => {
   };
 
   // Verify OTP submission
-  const handleVerifyOtp = (e?: React.FormEvent) => {
+  const handleVerifyOtp = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setError(null);
     const enteredCode = otpValues.join('');
@@ -214,8 +214,25 @@ export const LoginPage: React.FC = () => {
     }
 
     setIsVerifying(true);
-    setTimeout(() => {
+    try {
       if (enteredCode === generatedOtp) {
+        // Authenticate with backend using the new OTP bridge endpoint
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+        const res = await fetch(`${API_URL}/auth/otp-login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email.trim(), name: 'Operator', role }),
+        });
+        
+        if (!res.ok) {
+          throw new Error('Backend authentication failed');
+        }
+        
+        const data = await res.json();
+        
+        // Save token to localStorage for authenticated requests
+        localStorage.setItem('freshvision_token', data.token);
+
         setStep('success');
         setIsVerifying(false);
         const cleanMobile = mobile.replace(/\D/g, '');
@@ -233,7 +250,11 @@ export const LoginPage: React.FC = () => {
         setIsVerifying(false);
         setError('Incorrect verification code. Please check the code sent to your mobile and email.');
       }
-    }, 600);
+    } catch (err) {
+      setIsVerifying(false);
+      setError('Authentication failed. Please ensure the backend is running.');
+      console.error(err);
+    }
   };
 
   return (

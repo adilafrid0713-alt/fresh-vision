@@ -45,12 +45,6 @@ export const marketService = {
   },
 
   async getMyProducts(sellerId: string): Promise<MarketProduct[]> {
-    // In a real app with auth, the sellerId is derived from the session token.
-    // Here we pass it as a query param or handle it in the backend.
-    // For this prototype, let's assume we can fetch all products and filter locally, 
-    // or add a query parameter ?sellerId=...
-    
-    // We'll fetch all and filter for now as a simple workaround, since the API doesn't have a specific endpoint yet.
     const response = await fetch(`${API_URL}/market`);
     if (!response.ok) throw new Error('Failed to fetch market products');
     const allProducts: MarketProduct[] = await response.json();
@@ -58,10 +52,12 @@ export const marketService = {
   },
 
   async createProduct(data: Partial<MarketProduct>): Promise<MarketProduct> {
+    const token = localStorage.getItem('freshvision_token');
     const response = await fetch(`${API_URL}/market`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
       },
       body: JSON.stringify(data),
     });
@@ -70,10 +66,12 @@ export const marketService = {
   },
 
   async updateProduct(id: string, data: Partial<MarketProduct>): Promise<MarketProduct> {
+    const token = localStorage.getItem('freshvision_token');
     const response = await fetch(`${API_URL}/market/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
       },
       body: JSON.stringify(data),
     });

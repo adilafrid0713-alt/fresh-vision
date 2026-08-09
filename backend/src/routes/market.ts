@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import { prisma } from '../lib/prisma.js';
+import { authenticate, AuthRequest } from '../lib/auth.js';
+import { uploadImageToSupabase } from '../lib/supabase.js';
 
 export const marketRouter = Router();
 
@@ -30,8 +32,9 @@ marketRouter.get('/', async (req, res) => {
 // GET /api/market/:id
 marketRouter.get('/:id', async (req, res) => {
   try {
+    const productId = req.params.id as string;
     const product = await prisma.marketProduct.findUnique({
-      where: { id: req.params.id },
+      where: { id: productId },
       include: {
         seller: {
           select: { name: true, email: true }
@@ -52,17 +55,35 @@ marketRouter.get('/:id', async (req, res) => {
   }
 });
 
-// POST /api/market
-marketRouter.post('/', async (req, res) => {
+// POST /api/market (Protected)
+marketRouter.post('/', authenticate, async (req: AuthRequest, res) => {
   try {
     const { 
-      sellerId, title, description, quantity, unit, originalPrice, 
+      title, description, quantity, unit, originalPrice, 
       sellingPrice, expiryDate, categoryId, images,
       village, district, state, pinCode, pickupAvailable, homeDelivery,
       contactPhone, contactEmail, contactWhatsApp
     } = req.body;
     
-    // In a real app, verify that req.user.id === sellerId
+    if (!req.user?.id) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    const sellerId = req.user.id;
+    
+    // Upload images to Supabase if any exist
+    const uploadedImageUrls: string[] = [];
+    if (images && images.length > 0) {
+      for (let i = 0; i < images.length; i++) {
+        // Only upload base64 images, leave normal URLs alone
+        if (images[i].startsWith('data:image')) {
+          const fileName = `market/${Date.now()}-${sellerId}-${i}.jpg`;
+          const url = await uploadImageToSupabase(images[i], fileName);
+          uploadedImageUrls.push(url);
+        } else {
+          uploadedImageUrls.push(images[i]);
+        }
+      }
+    }
     
     const product = await prisma.marketProduct.create({
       data: {
@@ -84,9 +105,9 @@ marketRouter.post('/', async (req, res) => {
         contactPhone: contactPhone || null,
         contactEmail: contactEmail || null,
         contactWhatsApp: contactWhatsApp || null,
-        ...(images && images.length > 0 ? {
+        ...(uploadedImageUrls.length > 0 ? {
           images: {
-            create: images.map((url: string, index: number) => ({
+            create: uploadedImageUrls.map((url: string, index: number) => ({
               url,
               isPrimary: index === 0
             }))
@@ -102,9 +123,10 @@ marketRouter.post('/', async (req, res) => {
   }
 });
 
-// PUT /api/market/:id
-marketRouter.put('/:id', async (req, res) => {
+// PUT /api/market/:id (Protected)
+marketRouter.put('/:id', authenticate, async (req: AuthRequest, res) => {
   try {
+    const productId = req.params.id as string;
     const { 
       title, description, quantity, unit, originalPrice, 
       sellingPrice, expiryDate, categoryId, images,
@@ -112,10 +134,38 @@ marketRouter.put('/:id', async (req, res) => {
       contactPhone, contactEmail, contactWhatsApp, status
     } = req.body;
     
-    // In a real app, verify that req.user.id === product.sellerId
+    if (!req.user?.id) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    // Verify ownership
+    const existingProduct = await prisma.marketProduct.findUnique({
+      where: { id: productId }
+    });
+
+    if (!existingProduct) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+    if (existingProduct.sellerId !== req.user.id) {
+      return res.status(403).json({ error: 'Forbidden: You do not own this product' });
+    }
+    
+    // Process image uploads
+    const uploadedImageUrls: string[] = [];
+    if (images && images.length > 0) {
+      for (let i = 0; i < images.length; i++) {
+        if (images[i].startsWith('data:image')) {
+          const fileName = `market/${Date.now()}-${req.user.id}-${i}.jpg`;
+          const url = await uploadImageToSupabase(images[i], fileName);
+          uploadedImageUrls.push(url);
+        } else {
+          uploadedImageUrls.push(images[i]);
+        }
+      }
+    }
     
     const product = await prisma.marketProduct.update({
-      where: { id: req.params.id },
+      where: { id: productId },
       data: {
         ...(categoryId && { categoryId }),
         ...(title && { title }),
@@ -138,12 +188,11 @@ marketRouter.put('/:id', async (req, res) => {
       }
     });
     
-    // Handle images update if provided (simple version: delete old, create new)
-    if (images && images.length > 0) {
-      await prisma.marketImage.deleteMany({ where: { productId: req.params.id } });
+    if (uploadedImageUrls.length > 0) {
+      await prisma.marketImage.deleteMany({ where: { productId: productId } });
       await prisma.marketImage.createMany({
-        data: images.map((url: string, index: number) => ({
-          productId: req.params.id,
+        data: uploadedImageUrls.map((url: string, index: number) => ({
+          productId: productId,
           url,
           isPrimary: index === 0
         }))

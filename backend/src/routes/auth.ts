@@ -85,6 +85,46 @@ authRouter.post('/login', async (req, res): Promise<void> => {
   }
 });
 
+// OTP Login (for bridging the frontend prototype UI with the backend JWT system)
+authRouter.post('/otp-login', async (req, res): Promise<void> => {
+  try {
+    const { email, name, role } = req.body;
+    if (!email) {
+      res.status(400).json({ error: 'Email is required.' });
+      return;
+    }
+
+    let user = await prisma.user.findUnique({ where: { email } });
+    
+    // Auto-register if doesn't exist for prototype seamlessness
+    if (!user) {
+      const hash = await bcrypt.hash(Math.random().toString(36), 10);
+      user = await prisma.user.create({
+        data: {
+          email,
+          password: hash,
+          name: name || 'Operator',
+          role: role || 'Quality Inspector',
+        }
+      });
+    }
+
+    const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '24h' });
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        verifiedAt: user.createdAt,
+      },
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 authRouter.get('/me', async (req, res): Promise<void> => {
   try {
     const authHeader = req.headers.authorization;

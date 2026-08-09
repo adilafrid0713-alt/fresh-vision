@@ -16,7 +16,22 @@ const PORT = process.env.PORT || 8000;
 
 // Security & Middlewares
 app.use(helmet({ crossOriginResourcePolicy: false }));
-app.use(cors({ origin: '*' }));
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://freshvision-demo.vercel.app',
+  process.env.FRONTEND_URL
+].filter(Boolean);
+
+app.use(cors({ 
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true 
+}));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
@@ -45,6 +60,10 @@ app.get('/api/health', (_req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 FreshVision Enterprise API Server running on port http://localhost:${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production' || process.env.RUN_LOCAL === 'true') {
+  app.listen(PORT, () => {
+    console.log(`🚀 FreshVision Enterprise API Server running on port http://localhost:${PORT}`);
+  });
+}
+
+export default app;
