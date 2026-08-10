@@ -9,7 +9,7 @@
     "dev:backend": "npm run dev --prefix backend",
     "build": "npm run build --prefix frontend && npm run build --prefix backend",
     "preview": "npm run preview --prefix frontend",
-    "postinstall": "prisma generate --schema=backend/prisma/schema.prisma"
+    "postinstall": "cd backend && npm install && npx prisma generate"
   },
   "dependencies": {
     "@google/genai": "^2.10.0",
