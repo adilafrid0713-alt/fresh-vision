@@ -38,6 +38,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   logout: () => {
     try {
       localStorage.removeItem('freshvision_auth_user');
+      localStorage.removeItem('freshvision_token');
     } catch (e) {
       console.error('Failed to clear auth state', e);
     }

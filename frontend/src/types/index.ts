@@ -42,6 +42,29 @@ export interface InspectionMetrics {
   defect_freedom_index?: number;
 }
 
+export interface SpoilagePoint {
+  day: number;
+  coldStorageScore: number;
+  roomTempScore: number;
+  status: string;
+}
+
+export interface SpoilageData {
+  initialFreshness: number;
+  projectedShelfLifeDays: number;
+  optimalProcessingCutoffDay: number;
+  discardCutoffDay: number;
+  curve: SpoilagePoint[];
+}
+
+export interface AIPricingData {
+  qualityGrade: QualityGrade;
+  freshnessScore: number;
+  suggestedDiscountPercent: number;
+  pricingCategory: string;
+  reasoning: string;
+}
+
 export interface InspectionRecord {
   id: string;
   batch_id: string;
@@ -54,7 +77,10 @@ export interface InspectionRecord {
   annotated_image_url?: string;
   heatmap_image_url?: string;
   pdf_report_url?: string;
+  spoilage_data?: SpoilageData;
+  ai_pricing?: AIPricingData;
   processing_time_ms: number;
+  isCached?: boolean;
 }
 
 export interface InspectionBatch {

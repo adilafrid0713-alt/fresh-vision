@@ -1,16 +1,18 @@
 import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
-import { Upload, Camera, AlertCircle, Scan, ArrowRight, X, Layers, CheckCircle2 } from 'lucide-react';
+import { Upload, Camera, AlertCircle, Scan, ArrowRight, X, Layers, CheckCircle2, Zap } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { useInspectionStore } from '../store/inspectionStore';
+import { compressImage } from '../utils/imageCompressor';
 
 export const UploadPage: React.FC = () => {
   const navigate = useNavigate();
   const { setUpload, setIsUploading, setIsProcessing, setProcessingStage, selectedFoodTypeHint } = useInspectionStore();
   const [preview, setPreview] = useState<string | null>(null);
   const [fileData, setFileData] = useState<File | null>(null);
+  const [compressionInfo, setCompressionInfo] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [activePreviewFilter, setActivePreviewFilter] = useState<'rgb' | 'uv' | 'nir'>('rgb');
@@ -49,18 +51,26 @@ export const UploadPage: React.FC = () => {
     }
   ];
 
-  const onDrop = useCallback((acceptedFiles: File[], rejectedFiles: any[]) => {
+  const onDrop = useCallback(async (acceptedFiles: File[], rejectedFiles: any[]) => {
     setError(null);
+    setCompressionInfo(null);
     if (rejectedFiles.length > 0) {
       setError('Invalid file format or file exceeds 15MB size limit. Please upload JPEG, PNG, or WEBP.');
       return;
     }
 
     if (acceptedFiles.length > 0) {
-      const file = acceptedFiles[0];
-      setFileData(file);
-      const objectUrl = URL.createObjectURL(file);
-      setPreview(objectUrl);
+      const originalFile = acceptedFiles[0];
+      try {
+        const compressed = await compressImage(originalFile, { maxDimension: 1280, quality: 0.82 });
+        setFileData(compressed.file);
+        setPreview(compressed.dataUrl);
+        setCompressionInfo(compressed.compressionRatio);
+      } catch {
+        setFileData(originalFile);
+        const objectUrl = URL.createObjectURL(originalFile);
+        setPreview(objectUrl);
+      }
     }
   }, []);
 
@@ -234,6 +244,13 @@ export const UploadPage: React.FC = () => {
                     <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
                     <span>OPTICAL MATRIX ARMED</span>
                   </div>
+
+                  {compressionInfo && (
+                    <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 bg-emerald-950/80 backdrop-blur-md px-3 py-1 rounded-lg border border-emerald-500/40 font-mono text-[10px] text-emerald-300 font-bold shadow">
+                      <Zap className="w-3 h-3 text-yellow-400" />
+                      <span>{compressionInfo}</span>
+                    </div>
+                  )}
 
                   <div className="absolute bottom-3 left-3 right-3 flex justify-between items-center bg-muted/40 backdrop-blur-sm px-4 py-2.5 rounded-xl border border-border text-xs font-mono z-20 shadow-lg">
                     <span className="text-foreground truncate max-w-[240px] font-bold">

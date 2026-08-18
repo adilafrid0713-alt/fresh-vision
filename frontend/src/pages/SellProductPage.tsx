@@ -1,29 +1,47 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Tag, Upload, Sparkles, Check, X } from 'lucide-react';
+import { Tag, Upload, Sparkles, Check, X, ShieldCheck } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { marketService } from '../services/marketService';
 
 export const SellProductPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const editId = searchParams.get('edit');
   const isEditing = !!editId;
   const [loading, setLoading] = useState(!!editId);
   
-  const [useAIFill, setUseAIFill] = useState(false);
+  const inspectionPrefill = location.state as {
+    fromInspection?: boolean;
+    inspectionId?: string;
+    foodType?: string;
+    qualityGrade?: string;
+    freshnessScore?: number;
+    shelfLifeDays?: number;
+    suggestedDiscountPercent?: number;
+    pricingCategory?: string;
+    imageUrl?: string;
+    recommendation?: string;
+  } | null;
+
+  const [useAIFill, setUseAIFill] = useState(!!inspectionPrefill?.fromInspection);
   const [submitting, setSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [formData, setFormData] = useState({
-    title: '',
+    title: inspectionPrefill?.foodType ? `${inspectionPrefill.foodType} (Grade ${inspectionPrefill.qualityGrade || 'A'})` : '',
     categoryId: 'veg-1',
-    quantity: '',
+    quantity: '25',
     unit: 'kg',
-    originalPrice: '',
-    sellingPrice: '',
-    description: '',
+    originalPrice: '120',
+    sellingPrice: inspectionPrefill?.suggestedDiscountPercent
+      ? String(Math.round(120 * (1 - inspectionPrefill.suggestedDiscountPercent / 100)))
+      : '120',
+    description: inspectionPrefill?.recommendation
+      ? `FreshVision AI Verified Inspection (${inspectionPrefill.inspectionId || 'Batch'}): ${inspectionPrefill.recommendation}. Quality Grade ${inspectionPrefill.qualityGrade}, Freshness: ${inspectionPrefill.freshnessScore}%.`
+      : '',
     village: '',
     district: '',
     state: '',
@@ -34,8 +52,8 @@ export const SellProductPage: React.FC = () => {
     contactEmail: '',
     contactWhatsApp: '',
     shelfTimeMode: 'hours',
-    shelfTimeValue: '24',
-    images: [] as string[]
+    shelfTimeValue: inspectionPrefill?.shelfLifeDays ? String(Math.round(inspectionPrefill.shelfLifeDays * 24)) : '48',
+    images: inspectionPrefill?.imageUrl ? [inspectionPrefill.imageUrl] : [] as string[]
   });
 
   useEffect(() => {
@@ -178,9 +196,9 @@ export const SellProductPage: React.FC = () => {
       }
       
       navigate(`/market/product/${savedProduct.id}`);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to save listing', error);
-      alert('Unable to save your listing. Please try again.');
+      alert(error?.message || 'Unable to save your listing. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -203,6 +221,27 @@ export const SellProductPage: React.FC = () => {
           </p>
         </div>
       </div>
+
+      {inspectionPrefill?.fromInspection && (
+        <div className="bg-gradient-to-r from-emerald-950/60 via-emerald-900/30 to-background border border-emerald-500/40 p-4 rounded-2xl flex items-center justify-between gap-4 shadow-lg">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <span className="text-xs font-bold font-mono text-emerald-400 uppercase tracking-wide flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" /> AI Inspection Pre-Fill Active
+              </span>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Data calibrated from Inspection <span className="font-mono text-foreground font-bold">{inspectionPrefill.inspectionId}</span> • Grade <span className="text-emerald-400 font-bold">{inspectionPrefill.qualityGrade}</span> ({inspectionPrefill.freshnessScore}% Freshness) with {inspectionPrefill.suggestedDiscountPercent}% suggested AI markdown.
+              </p>
+            </div>
+          </div>
+          <span className="text-xs font-mono font-bold text-emerald-400 bg-emerald-950 px-3 py-1 rounded-lg border border-emerald-500/30 shrink-0">
+            Auto-Calibrated
+          </span>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2 space-y-6">

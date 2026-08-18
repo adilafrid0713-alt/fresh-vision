@@ -33,11 +33,17 @@ model Inspection {
   defectsJson         String
   detectedItemsJson   String
   rawImageUrl         String
+  spoilageDataJson    String?
+  aiPricingJson       String?
   timestamp           DateTime @default(now())
   
   // Optional userId if we want to link it
   userId              String?
   user                User?    @relation(fields: [userId], references: [id])
+
+  @@index([timestamp(sort: Desc)])
+  @@index([foodType, batchId])
+  @@index([userId])
 }
 
 // --------------------------------------------------------------------
@@ -95,6 +101,11 @@ model MarketProduct {
   views             MarketView[]
   orders            MarketOrder[]
   reviews           MarketReview[]
+
+  @@index([status, categoryId])
+  @@index([freshnessScore])
+  @@index([sellerId])
+  @@index([createdAt(sort: Desc)])
 }
 
 model MarketImage {
@@ -200,6 +211,9 @@ model MediaLibrary {
   updatedAt       DateTime     @updatedAt
 
   tags            MediaTag[]
+
+  @@index([userId, isDeleted])
+  @@index([folderId])
 }
 
 model MediaTag {

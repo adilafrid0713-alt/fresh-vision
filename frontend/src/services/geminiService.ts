@@ -1,18 +1,91 @@
 import { GoogleGenAI } from '@google/genai';
-import type { InspectionRecord } from '../types';
+import type { InspectionRecord, SpoilageData, AIPricingData } from '../types';
+import { compressImage } from '../utils/imageCompressor';
 
-// Helper to convert File/Blob/URL to base64
-async function getBase64FromUrlOrFile(input: File | Blob | string): Promise<{ base64: string; mimeType: string }> {
-  if (typeof input === 'string') {
-    const res = await fetch(input);
-    const blob = await res.blob();
-    return getBase64FromBlob(blob);
+function calculateClientSpoilage(freshnessScore: number, shelfLifeDays: number, grade: string): SpoilageData {
+  const points = [];
+  const baseDecayRate = grade === 'A' ? 0.045 : grade === 'B' ? 0.075 : grade === 'C' ? 0.14 : 0.28;
+
+  for (let day = 0; day <= 14; day++) {
+    const coldStorageScore = Math.max(0, Math.min(100, freshnessScore * Math.exp(-baseDecayRate * 0.45 * day)));
+    const roomTempScore = Math.max(0, Math.min(100, freshnessScore * Math.exp(-baseDecayRate * 1.35 * day)));
+
+    let status = 'Peak Freshness';
+    if (coldStorageScore < 50) status = 'Hazard / Discard';
+    else if (coldStorageScore < 70) status = 'Commercial Processing Only';
+    else if (coldStorageScore < 85) status = 'Supermarket Grade';
+
+    points.push({
+      day,
+      coldStorageScore: Number(coldStorageScore.toFixed(1)),
+      roomTempScore: Number(roomTempScore.toFixed(1)),
+      status,
+    });
+  }
+
+  return {
+    initialFreshness: freshnessScore,
+    projectedShelfLifeDays: shelfLifeDays,
+    optimalProcessingCutoffDay: Math.max(1, Math.round(shelfLifeDays * 0.65)),
+    discardCutoffDay: Math.max(2, Math.round(shelfLifeDays * 1.1)),
+    curve: points,
+  };
+}
+
+function calculateClientPricing(freshnessScore: number, shelfLifeDays: number, qualityGrade: any): AIPricingData {
+  let suggestedDiscountPercent = 0;
+  let pricingCategory = 'Premium Export';
+  let reasoning = 'Pristine biological condition; commands standard or premium retail pricing.';
+
+  if (qualityGrade === 'A') {
+    suggestedDiscountPercent = 0;
+    pricingCategory = 'Full Retail Price';
+    reasoning = 'Grade A condition with high shelf life. Zero discount needed.';
+  } else if (qualityGrade === 'B') {
+    suggestedDiscountPercent = shelfLifeDays <= 3 ? 20 : 10;
+    pricingCategory = 'Standard Market Price';
+    reasoning = 'Minor superficial marks; fast-moving retail price suggested.';
+  } else if (qualityGrade === 'C') {
+    suggestedDiscountPercent = shelfLifeDays <= 2 ? 50 : 35;
+    pricingCategory = 'Discount Clearance / Processing';
+    reasoning = 'Immediate commercial juice/puree processing discount recommended.';
   } else {
-    return getBase64FromBlob(input);
+    suggestedDiscountPercent = 85;
+    pricingCategory = 'Salvage / Bio-compost';
+    reasoning = 'Unsuitable for raw consumption. Heavy markdown for livestock/compost utility.';
+  }
+
+  return {
+    qualityGrade,
+    freshnessScore,
+    suggestedDiscountPercent,
+    pricingCategory,
+    reasoning,
+  };
+}
+
+// Helper to convert File/Blob/URL to base64 with smart compression
+async function getBase64FromUrlOrFile(input: File | Blob | string): Promise<{ base64: string; mimeType: string; dataUrl: string }> {
+  try {
+    const compressed = await compressImage(input, { maxDimension: 1280, quality: 0.82 });
+    return {
+      base64: compressed.base64,
+      mimeType: compressed.mimeType,
+      dataUrl: compressed.dataUrl,
+    };
+  } catch (err) {
+    console.warn('Canvas compression fallback to standard reader:', err);
+    if (typeof input === 'string') {
+      const res = await fetch(input);
+      const blob = await res.blob();
+      return getBase64FromBlob(blob);
+    } else {
+      return getBase64FromBlob(input);
+    }
   }
 }
 
-function getBase64FromBlob(blob: Blob): Promise<{ base64: string; mimeType: string }> {
+function getBase64FromBlob(blob: Blob): Promise<{ base64: string; mimeType: string; dataUrl: string }> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onloadend = () => {
@@ -20,7 +93,7 @@ function getBase64FromBlob(blob: Blob): Promise<{ base64: string; mimeType: stri
       const [header, data] = result.split(',');
       const match = header.match(/:(.*?);/);
       const mimeType = match ? match[1] : 'image/jpeg';
-      resolve({ base64: data, mimeType });
+      resolve({ base64: data, mimeType, dataUrl: result });
     };
     reader.onerror = reject;
     reader.readAsDataURL(blob);
@@ -188,6 +261,10 @@ Return ONLY the valid JSON object without any Markdown formatting or extra text.
           }
         ];
 
+      const shelfLifeDays = Number(parsed.metrics?.shelf_life_days || 14.0);
+      const spoilageData = calculateClientSpoilage(rawFreshness, shelfLifeDays, rawGrade);
+      const aiPricing = calculateClientPricing(rawFreshness, shelfLifeDays, rawGrade);
+
       const record: InspectionRecord = {
         id: `INS-${Math.floor(10000 + Math.random() * 90000)}`,
         batch_id: batchId,
@@ -197,7 +274,7 @@ Return ONLY the valid JSON object without any Markdown formatting or extra text.
           freshness_score: rawFreshness,
           confidence: Number(parsed.metrics?.confidence || 98.5),
           damage_percentage: rawDamage,
-          shelf_life_days: Number(parsed.metrics?.shelf_life_days || 14.0),
+          shelf_life_days: shelfLifeDays,
           quality_grade: rawGrade as any,
           risk_level: (parsed.metrics?.risk_level || 'Low') as any,
           recommendation: parsed.metrics?.recommendation || 'Suitable for Retail Packaging.',
@@ -216,6 +293,8 @@ Return ONLY the valid JSON object without any Markdown formatting or extra text.
         raw_image_url: typeof input === 'string' ? input : URL.createObjectURL(input),
         annotated_image_url: typeof input === 'string' ? input : URL.createObjectURL(input),
         heatmap_image_url: typeof input === 'string' ? input : URL.createObjectURL(input),
+        spoilage_data: spoilageData,
+        ai_pricing: aiPricing,
         processing_time_ms: 350,
       };
 

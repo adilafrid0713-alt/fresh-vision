@@ -3,18 +3,22 @@ import { useNavigate } from 'react-router-dom';
 import { 
   CheckCircle2, AlertTriangle, XCircle, ShieldCheck, Download, 
   RefreshCw, Layers, Eye, FileText, Thermometer, Box, ArrowLeft,
-  ThumbsUp, ThumbsDown, Sparkles, CheckCircle, Tag, ChevronRight
+  ThumbsUp, ThumbsDown, Sparkles, CheckCircle, Tag, ChevronRight,
+  GitCompare, ShoppingBag, ArrowUpRight, Zap
 } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { useInspectionStore } from '../store/inspectionStore';
+import { SpoilageSimulator } from '../components/inspection/SpoilageSimulator';
+import { BatchCompareModal } from '../components/inspection/BatchCompareModal';
 
 export const ResultPage: React.FC = () => {
   const navigate = useNavigate();
-  const { activeInspection, addRecentInspection, resetWorkflow } = useInspectionStore();
+  const { activeInspection, recentInspections, addRecentInspection, resetWorkflow } = useInspectionStore();
   const [viewMode, setViewMode] = useState<'raw' | 'bbox' | 'heatmap'>('bbox');
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<'all' | 'Good to Consume' | 'Processing / Juice Only' | 'Not Good to Consume (Discard)'>('all');
+  const [isCompareOpen, setIsCompareOpen] = useState(false);
 
   if (!activeInspection) {
     return (
@@ -36,7 +40,39 @@ export const ResultPage: React.FC = () => {
     );
   }
 
-  const { metrics, food_type, id, timestamp, raw_image_url, processing_time_ms } = activeInspection;
+  const { metrics, food_type, id, timestamp, raw_image_url, processing_time_ms, spoilage_data, ai_pricing, isCached } = activeInspection;
+
+  // AI Pricing Fallback
+  const discountPercent = ai_pricing?.suggestedDiscountPercent ?? (
+    metrics.quality_grade === 'A' ? 0 : metrics.quality_grade === 'B' ? 15 : metrics.quality_grade === 'C' ? 40 : 80
+  );
+  const pricingCategory = ai_pricing?.pricingCategory ?? (
+    metrics.quality_grade === 'A' ? 'Premium Export & Full Retail' :
+    metrics.quality_grade === 'B' ? 'Standard Supermarket Price' :
+    metrics.quality_grade === 'C' ? 'Clearance / Industrial Extraction' : 'Salvage & Bio-Compost'
+  );
+  const pricingReasoning = ai_pricing?.reasoning ?? (
+    metrics.quality_grade === 'A' ? 'Zero discount required; pristine biological cell structure.' :
+    metrics.quality_grade === 'B' ? 'Minor skin marks; 15% markdown ensures rapid inventory velocity.' :
+    metrics.quality_grade === 'C' ? 'Enzymatic softening; 40% discount for commercial puree/juice processors.' : 'Unfit for whole consumption. 80% markdown for compost.'
+  );
+
+  const handleListOnMarket = () => {
+    navigate('/market/sell', {
+      state: {
+        fromInspection: true,
+        inspectionId: id,
+        foodType: food_type,
+        qualityGrade: metrics.quality_grade,
+        freshnessScore: metrics.freshness_score,
+        shelfLifeDays: metrics.shelf_life_days,
+        suggestedDiscountPercent: discountPercent,
+        pricingCategory: pricingCategory,
+        imageUrl: raw_image_url,
+        recommendation: metrics.recommendation,
+      },
+    });
+  };
 
   const detectedItems = activeInspection.detected_items && activeInspection.detected_items.length > 0
     ? activeInspection.detected_items
@@ -108,25 +144,38 @@ export const ResultPage: React.FC = () => {
               <span className="font-mono text-xs text-emerald-400 font-bold bg-emerald-950/80 px-2.5 py-0.5 rounded-md border border-emerald-500/30">
                 {id}
               </span>
+              {isCached && (
+                <span className="font-mono text-[10px] text-yellow-300 font-bold bg-yellow-950/80 px-2 py-0.5 rounded-md border border-yellow-500/30 flex items-center gap-1">
+                  <Zap className="w-3 h-3 text-yellow-400" />
+                  INSTANT CACHE HIT
+                </span>
+              )}
             </div>
             <p className="text-xs text-muted-foreground font-mono mt-0.5">Completed at {timestamp} • Inference Latency: <span className="text-foreground font-bold">{processing_time_ms}ms</span></p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5">
+          <button
+            onClick={() => setIsCompareOpen(true)}
+            className="bg-accent text-foreground hover:bg-accent/80 border border-emerald-500/30 flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold cursor-pointer transition-all shadow-sm"
+          >
+            <GitCompare className="h-4 w-4 text-emerald-400" />
+            <span>Compare Batches</span>
+          </button>
           <button
             onClick={() => downloadReport('csv')}
-            className="bg-secondary text-secondary-foreground hover:bg-secondary/80 border flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold cursor-pointer"
+            className="bg-secondary text-secondary-foreground hover:bg-secondary/80 border flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-semibold cursor-pointer transition-all"
           >
             <Download className="h-4 w-4 text-blue-400" />
-            <span>Export CSV Data</span>
+            <span>Export CSV</span>
           </button>
           <button
             onClick={() => downloadReport('pdf')}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-bold cursor-pointer"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold cursor-pointer transition-all shadow-md"
           >
             <FileText className="h-4 w-4" />
-            <span>Download PDF Certificate</span>
+            <span>PDF Certificate</span>
           </button>
         </div>
       </div>
@@ -392,15 +441,69 @@ export const ResultPage: React.FC = () => {
 
               <button
                 onClick={handleInspectAnother}
-                className="w-full bg-primary text-primary-foreground hover:bg-primary/90 py-3.5 rounded-2xl text-sm font-bold flex items-center justify-center gap-2.5 shadow-xl cursor-pointer"
+                className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/80 py-3 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 border border-border cursor-pointer transition-all"
               >
-                <RefreshCw className="h-4 w-4" />
+                <RefreshCw className="h-4 w-4 text-emerald-400" />
                 <span>Inspect Another Produce Item</span>
+              </button>
+            </div>
+          </Card>
+
+          {/* AI Dynamic Pricing & 1-Click Fresh Market Bridge */}
+          <Card className="bg-gradient-to-br from-emerald-950/40 via-card to-background border-emerald-500/40 shadow-xl overflow-hidden">
+            <div className="p-5 space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                    <ShoppingBag className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-foreground">AI Dynamic Pricing &amp; Market</h3>
+                    <p className="text-[11px] text-muted-foreground">Spot valuation based on biological quality</p>
+                  </div>
+                </div>
+                <Badge variant={discountPercent > 0 ? 'warning' : 'success'} className="font-mono text-xs">
+                  {discountPercent > 0 ? `-${discountPercent}% Markdown` : 'Full Retail Value'}
+                </Badge>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-background/60 border border-border/80 space-y-2">
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-muted-foreground font-medium">Pricing Tier:</span>
+                  <span className="font-bold text-foreground font-mono">{pricingCategory}</span>
+                </div>
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-muted-foreground font-medium">Suggested Markdown:</span>
+                  <span className="font-bold text-emerald-400 font-mono">
+                    {discountPercent === 0 ? '0% (Premium Export)' : `${discountPercent}% Off Base Rate`}
+                  </span>
+                </div>
+                <p className="text-[11px] text-muted-foreground border-t border-border/50 pt-2 leading-tight">
+                  {pricingReasoning}
+                </p>
+              </div>
+
+              <button
+                onClick={handleListOnMarket}
+                className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 py-3.5 rounded-2xl text-xs font-black flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 cursor-pointer transition-all hover:scale-[1.01]"
+              >
+                <Sparkles className="h-4 w-4" />
+                <span>List on Fresh Market (1-Click AI Pre-Fill)</span>
+                <ArrowUpRight className="h-4 w-4" />
               </button>
             </div>
           </Card>
         </div>
       </div>
+
+      {/* 14-Day Spoilage Simulator Section */}
+      <SpoilageSimulator
+        foodType={food_type}
+        qualityGrade={metrics.quality_grade}
+        initialFreshness={metrics.freshness_score}
+        shelfLifeDays={metrics.shelf_life_days}
+        spoilageData={spoilage_data}
+      />
 
       {/* Item-by-Item Consumption & Quality Breakdown Console */}
       <div id="item-breakdown-section" className="space-y-6 pt-6">
@@ -590,7 +693,16 @@ export const ResultPage: React.FC = () => {
           })}
         </div>
       </div>
+
+      {/* Batch Quality Comparison Modal */}
+      <BatchCompareModal
+        isOpen={isCompareOpen}
+        onClose={() => setIsCompareOpen(false)}
+        currentRecord={activeInspection}
+        historyRecords={recentInspections}
+      />
     </div>
   );
 };
+
 
